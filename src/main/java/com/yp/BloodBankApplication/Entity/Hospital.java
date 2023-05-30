@@ -16,7 +16,7 @@ import java.util.List;
 public class Hospital {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int hospitalId;
 
     private String hospitalName;

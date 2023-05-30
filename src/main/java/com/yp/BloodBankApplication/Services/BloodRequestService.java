@@ -21,14 +21,11 @@ public class BloodRequestService {
     @Autowired
     private HospitalRepository hospitalRepository;
 
-    public BloodRequest addBloodRequest(BloodReqRequest bloodRequest){
-        Optional<Hospital> hospital = hospitalRepository.findByHospitalName(bloodRequest.getHospitalName());
+    public BloodRequest addBloodRequest(BloodReqRequest bloodRequest,int hospitalId){
+        Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
         if(hospital.isPresent()){
-            BloodRequest bloodRequest1 = new BloodRequest();
-            bloodRequest1.setPatientName(bloodRequest.getName());
-            bloodRequest1.setAge(bloodRequest.getAge());
-            bloodRequest1.setHospital(hospital.get());
-            bloodRequestRepository.save(bloodRequest1);
+            BloodRequest bloodRequest1 = new BloodRequest(bloodRequest.getId(), bloodRequest.getName(), bloodRequest.getAge(),bloodRequest.getBloodGroup(),bloodRequest.getPriority(),hospital.get());
+            return bloodRequestRepository.save(bloodRequest1);
         }
         throw new HospitalNotFoundException("Hospital Not Found");
     }
