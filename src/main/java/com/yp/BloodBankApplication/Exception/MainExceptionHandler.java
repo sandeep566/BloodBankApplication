@@ -19,4 +19,11 @@ public class MainExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 
     }
+    @ExceptionHandler(BloodBankNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(BloodBankNotFoundException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
 }

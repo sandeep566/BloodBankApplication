@@ -1,8 +1,11 @@
 package com.yp.BloodBankApplication.Requests;
 
+import com.yp.BloodBankApplication.Entity.BloodGroupDetails;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,4 +21,5 @@ public class BloodBankRequest {
     private long phoneNo;
 
     private String mailAddress;
+
 }

@@ -36,5 +36,5 @@ public class Donor {
     @JsonIgnoreProperties(value = {"donorList" , "hibernateLazyInitializer"})
     private BloodBank bloodBank;
 
-    private double donationQuantity;
+    private int donationQuantity;
 }
