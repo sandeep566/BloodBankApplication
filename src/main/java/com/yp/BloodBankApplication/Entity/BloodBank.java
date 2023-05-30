@@ -44,5 +44,5 @@ public class BloodBank {
             joinColumns = @JoinColumn(name = "blood_bank_id"))
     @MapKeyEnumerated(EnumType.STRING)
     @Column(name = "blood_group_quantity")
-    private Map<BloodGroup,Integer> bloodGroupIntegerMap;
+    private Map<BloodGroup,Integer> bloodGroups;
 }

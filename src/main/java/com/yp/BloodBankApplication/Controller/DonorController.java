@@ -17,6 +17,6 @@ public class DonorController {
 
     @PostMapping("/add/{bloodBankId}")
     public ResponseEntity<Donor> addDonor(@RequestBody DonorRequest donorRequest , @PathVariable int bloodBankId){
-        return new ResponseEntity<>(donorService.RegisterDonor(donorRequest,bloodBankId), HttpStatus.OK);
+        return new ResponseEntity<>(donorService.registerDonor(donorRequest,bloodBankId), HttpStatus.OK);
     }
 }

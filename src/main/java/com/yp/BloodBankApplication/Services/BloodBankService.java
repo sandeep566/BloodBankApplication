@@ -2,15 +2,13 @@ package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -28,5 +26,17 @@ public class BloodBankService {
         }
         BloodBank bloodBank = new BloodBank(bloodBankRequest.getBloodBankId(), bloodBankRequest.getBloodBankName(), bloodBankRequest.getAddress(), bloodBankRequest.getPhoneNo(),new ArrayList<>(),bloodBankRequest.getMailAddress(),bloodGroupIntegerMap);
         return bloodBankRepository.save(bloodBank);
+    }
+
+    public BloodBank updateBloodBank(BloodBankRequest bloodBankRequest){
+        BloodBank bank = bloodBankRepository.findById(bloodBankRequest.getBloodBankId()).orElse(null);
+        if(bank != null){
+            bank.setBloodBankName(bloodBankRequest.getBloodBankName());
+            bank.setAddress(bloodBankRequest.getAddress());
+            bank.setPhoneNumber(bloodBankRequest.getPhoneNo());
+            bank.setMailAddress(bloodBankRequest.getMailAddress());
+            return bloodBankRepository.save(bank);
+        }
+        throw new BloodBankNotFoundException("Blood Bank Not Found");
     }
 }

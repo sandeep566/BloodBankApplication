@@ -6,10 +6,7 @@ import com.yp.BloodBankApplication.Services.BloodBankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/bloodBank")
@@ -20,7 +17,13 @@ public class BloodBankController {
 
     @PostMapping("/add")
     public ResponseEntity<BloodBank> addBloodBank(@RequestBody BloodBankRequest bloodBankRequest){
-        return new ResponseEntity<>(bloodBankService.registerBloodBank(bloodBankRequest), HttpStatus.OK);
+        return new ResponseEntity<>(bloodBankService.registerBloodBank(bloodBankRequest), HttpStatus.CREATED);
+    }
+
+
+    @PutMapping("/update")
+    public ResponseEntity<BloodBank> updateBloodBank(@RequestBody BloodBankRequest bloodBank){
+        return new ResponseEntity<>(bloodBankService.updateBloodBank(bloodBank),HttpStatus.OK);
     }
 
 }
