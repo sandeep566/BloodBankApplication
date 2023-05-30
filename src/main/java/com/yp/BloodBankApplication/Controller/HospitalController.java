@@ -20,9 +20,9 @@ public class HospitalController {
         return new ResponseEntity<>(hospitalResponse,HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Hospital> updateHospital(@RequestBody Hospital hospital,@PathVariable int id){
-        Hospital hospitalResponse = hospitalService.updateHospital(hospital,id);
+    @PutMapping("/update")
+    public ResponseEntity<Hospital> updateHospital(@RequestBody Hospital hospital){
+        Hospital hospitalResponse = hospitalService.updateHospital(hospital);
         return new ResponseEntity<>(hospitalResponse, HttpStatus.OK);
     }
 }
