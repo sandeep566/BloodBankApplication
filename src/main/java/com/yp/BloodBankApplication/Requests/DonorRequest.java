@@ -22,9 +22,9 @@ public class DonorRequest {
 
     private long phoneNo;
 
-    private BloodGroup bloodGroup;
+//    private BloodGroup bloodGroup;
 
-    private List<BloodGroup> bloodGroupList;
+//    private List<BloodGroup> bloodGroupList;
 
     private int donationQuantity;
 }

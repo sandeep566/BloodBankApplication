@@ -19,13 +19,13 @@ public class DonorController {
     private DonorService donorService;
 
     @PostMapping("/add/{bloodBankId}")
-    public ResponseEntity<Donor> addDonor(@RequestBody DonorRequest donorRequest , @PathVariable int bloodBankId){
-        return new ResponseEntity<>(donorService.registerDonor(donorRequest,bloodBankId), HttpStatus.OK);
+    public ResponseEntity<Donor> addDonor(@RequestBody DonorRequest donorRequest , @PathVariable int bloodBankId, @RequestParam("bloodGroup") BloodGroup bloodGroup){
+        return new ResponseEntity<>(donorService.registerDonor(donorRequest,bloodBankId,bloodGroup), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Donor> updateDonor(@RequestBody DonorRequest donorRequest){
-        return new ResponseEntity<>(donorService.updateDonor(donorRequest),HttpStatus.OK);
+    public ResponseEntity<Donor> updateDonor(@RequestBody DonorRequest donorRequest,@RequestParam("bloodGroup") BloodGroup bloodGroup){
+        return new ResponseEntity<>(donorService.updateDonor(donorRequest,bloodGroup),HttpStatus.OK);
     }
 
     @GetMapping("/view/{donorId}")
