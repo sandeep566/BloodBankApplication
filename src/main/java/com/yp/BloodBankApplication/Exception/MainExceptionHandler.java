@@ -3,11 +3,11 @@ package com.yp.BloodBankApplication.Exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import com.yp.BloodBankApplication.Response.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class MainExceptionHandler {
 
 
@@ -29,6 +29,21 @@ public class MainExceptionHandler {
 
     @ExceptionHandler(BloodGroupNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(BloodGroupNotFoundException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BloodRequestNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(BloodRequestNotFoundException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(DonorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleException(DonorNotFoundException ex){
 
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
 

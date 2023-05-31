@@ -31,5 +31,7 @@ public class BloodRequest {
     @JsonIgnoreProperties(value = {"bloodRequests" , "hibernateLazyInitializer"})
     private Hospital hospital;
 
+    private int quantity;
+
 
 }

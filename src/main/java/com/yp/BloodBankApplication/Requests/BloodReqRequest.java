@@ -16,4 +16,5 @@ public class BloodReqRequest {
     private int age;
     private BloodGroup bloodGroup;
     private Priority priority;
+    private int quantity;
 }

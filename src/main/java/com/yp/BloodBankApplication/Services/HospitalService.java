@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -33,6 +34,27 @@ public class HospitalService {
             return hospitalRepository.save(hospital1);
         }
         throw new HospitalNotFoundException("Hospital Not Found");
+    }
+
+    public Hospital viewHospital(int hospitalId){
+        Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
+        if(hospital.isPresent()){
+            return hospital.get();
+        }
+        throw new HospitalNotFoundException("Hospital not found");
+    }
+
+    public String deleteHospital(int hospitalId){
+        Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
+        if(hospital.isPresent()){
+            hospitalRepository.deleteById(hospitalId);
+            return "Hospital Deleted";
+        }
+        throw new HospitalNotFoundException("Hospital not found");
+    }
+
+    public List<Hospital> viewAllHospitals(){
+        return hospitalRepository.findAll();
     }
 
 

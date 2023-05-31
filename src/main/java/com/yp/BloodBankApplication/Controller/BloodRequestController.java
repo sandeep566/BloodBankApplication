@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/bloodRequest")
 public class BloodRequestController {
@@ -19,5 +21,30 @@ public class BloodRequestController {
     public ResponseEntity<BloodRequest> insertBloodRequest(@RequestBody BloodReqRequest bloodReqRequest, @PathVariable int hospitalId){
         BloodRequest bloodRequest = bloodRequestService.addBloodRequest(bloodReqRequest,hospitalId);
         return new ResponseEntity<>(bloodRequest, HttpStatus.OK);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<BloodRequest> updateBloodRequest(@RequestBody BloodReqRequest bloodReqRequest){
+        return new ResponseEntity<>(bloodRequestService.updateBloodRequest(bloodReqRequest),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{bloodRequestId}")
+    public ResponseEntity<String> removeBloodRequest(@PathVariable int bloodRequestId){
+        return new ResponseEntity<>(bloodRequestService.deleteBloodRequest(bloodRequestId),HttpStatus.OK);
+    }
+
+    @GetMapping("/viewAll")
+    public ResponseEntity<List<BloodRequest>> viewAllRequests(){
+        return new ResponseEntity<>(bloodRequestService.getAllBloodRequests(),HttpStatus.OK);
+    }
+
+    @GetMapping("/view/{requestId}")
+    public ResponseEntity<BloodRequest> viewBloodRequest(int requestId){
+        return new ResponseEntity<>(bloodRequestService.viewBloodRequest(requestId),HttpStatus.OK);
+    }
+
+    @GetMapping("/viewAllByHospital/{hospitalId}")
+    public ResponseEntity<List<BloodRequest>> viewAllRequestsByHospital(int hospitalId){
+        return new ResponseEntity<>(bloodRequestService.viewBloodRequestByHospitalId(hospitalId),HttpStatus.OK);
     }
 }
