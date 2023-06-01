@@ -20,11 +20,11 @@ public class SupplyReport {
 
     private BloodGroup bloodGroup;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "hospitalId")
     private Hospital hospital;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "bloodBankId")
     private BloodBank bloodBank;
 

@@ -154,4 +154,20 @@ public class DonorService {
         List<Donor> donors = donorRepository.findAll();
         return donors.stream().filter(donor -> donor.getBloodGroup().equals(bloodGroup)).collect(Collectors.toList());
     }
+
+    public String deleteDonor(int donorId){
+        Optional<Donor> donor = donorRepository.findById(donorId);
+        if(donor.isPresent()){
+            donorRepository.deleteById(donorId);
+            return "Donor Deleted";
+        }
+        throw new DonorNotFoundException("Donor not found");
+    }
+
+    public List<Donor> viewDonorsByAge(int age){
+        List<Donor> donors = donorRepository.findAll();
+        return donors.stream().filter(donor -> donor.getAge() == age).toList();
+    }
+
+
 }

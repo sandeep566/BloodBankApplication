@@ -1,6 +1,9 @@
 package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Entity.BloodRequest;
+import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Enums.IsSupplied;
+import com.yp.BloodBankApplication.Enums.Priority;
 import com.yp.BloodBankApplication.Requests.BloodReqRequest;
 import com.yp.BloodBankApplication.Services.BloodRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,14 +21,20 @@ public class BloodRequestController {
     private BloodRequestService bloodRequestService;
 
     @PostMapping("/add/{hospitalId}")
-    public ResponseEntity<BloodRequest> insertBloodRequest(@RequestBody BloodReqRequest bloodReqRequest, @PathVariable int hospitalId){
-        BloodRequest bloodRequest = bloodRequestService.addBloodRequest(bloodReqRequest,hospitalId);
+    public ResponseEntity<BloodRequest> insertBloodRequest(@RequestBody BloodReqRequest bloodReqRequest,
+                                                           @PathVariable int hospitalId,
+                                                           @RequestParam BloodGroup bloodGroup,
+                                                           @RequestParam Priority priority){
+        BloodRequest bloodRequest = bloodRequestService.addBloodRequest(bloodReqRequest,hospitalId,bloodGroup,priority);
         return new ResponseEntity<>(bloodRequest, HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<BloodRequest> updateBloodRequest(@RequestBody BloodReqRequest bloodReqRequest){
-        return new ResponseEntity<>(bloodRequestService.updateBloodRequest(bloodReqRequest),HttpStatus.OK);
+    public ResponseEntity<BloodRequest> updateBloodRequest(@RequestBody BloodReqRequest bloodReqRequest,
+                                                           @RequestParam("bloodGroup")BloodGroup bloodGroup,
+                                                           @RequestParam("priority")Priority priority,
+                                                           @RequestParam("isSupplied")IsSupplied isSupplied){
+        return new ResponseEntity<>(bloodRequestService.updateBloodRequest(bloodReqRequest,bloodGroup,priority,isSupplied),HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{bloodRequestId}")

@@ -14,7 +14,7 @@ public class BloodReqRequest {
     private int id;
     private String name;
     private int age;
-    private BloodGroup bloodGroup;
-    private Priority priority;
+//    private BloodGroup bloodGroup;
+//    private Priority priority;
     private int quantity;
 }

@@ -42,4 +42,14 @@ public class DonorController {
     public ResponseEntity<List<Donor>> viewAllDonorsByBloodGroup(@RequestParam("bloodGroup")BloodGroup bloodGroup){
         return new ResponseEntity<>(donorService.getAllDonorsByBloodGroup(bloodGroup),HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{donorId}")
+    public ResponseEntity<String> removeDonor(@PathVariable int donorId){
+        return new ResponseEntity<>(donorService.deleteDonor(donorId),HttpStatus.OK);
+    }
+
+    @GetMapping("/viewDonorByAge/{age}")
+    public ResponseEntity<List<Donor>> getDonorsByAge(@PathVariable int age){
+        return new ResponseEntity<>(donorService.viewDonorsByAge(age),HttpStatus.FOUND);
+    }
 }

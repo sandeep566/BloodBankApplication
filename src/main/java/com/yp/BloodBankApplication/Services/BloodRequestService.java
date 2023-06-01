@@ -1,8 +1,10 @@
 package com.yp.BloodBankApplication.Services;
 
-import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.Hospital;
+import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Enums.IsSupplied;
+import com.yp.BloodBankApplication.Enums.Priority;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Exception.BloodRequestNotFoundException;
 import com.yp.BloodBankApplication.Exception.HospitalNotFoundException;
@@ -37,13 +39,14 @@ public class BloodRequestService {
      * @return The added blood request.
      * @throws HospitalNotFoundException if the hospital with the given ID is not found.
      */
-    public BloodRequest addBloodRequest(BloodReqRequest bloodRequest,int hospitalId){
+    public BloodRequest addBloodRequest(BloodReqRequest bloodRequest, int hospitalId, BloodGroup bloodGroup,
+                                        Priority priority){
         Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
         if(hospital.isPresent()){
             BloodRequest bloodRequest1 = new BloodRequest(bloodRequest.getId(),
                     bloodRequest.getName(), bloodRequest.getAge(),
-                    bloodRequest.getBloodGroup(),
-                    bloodRequest.getPriority(),hospital.get(), bloodRequest.getQuantity());
+                    bloodGroup,
+                    priority,hospital.get(), bloodRequest.getQuantity(), IsSupplied.NO);
             return bloodRequestRepository.save(bloodRequest1);
         }
         throw new HospitalNotFoundException("Hospital Not Found");
@@ -57,14 +60,16 @@ public class BloodRequestService {
      * @return The updated blood request.
      * @throws BloodRequestNotFoundException if the blood request with the given ID is not found.
      */
-    public BloodRequest updateBloodRequest(BloodReqRequest bloodReqRequest){
+    public BloodRequest updateBloodRequest(BloodReqRequest bloodReqRequest,BloodGroup bloodGroup,
+                                           Priority priority,IsSupplied isSupplied){
         BloodRequest bloodRequest = bloodRequestRepository.findById(bloodReqRequest.getId()).orElse(null);
         if(bloodRequest != null){
             bloodRequest.setPatientName(bloodReqRequest.getName());
             bloodRequest.setAge(bloodReqRequest.getAge());
-            bloodRequest.setBloodGroup(bloodReqRequest.getBloodGroup());
-            bloodRequest.setPriority(bloodReqRequest.getPriority());
+            bloodRequest.setBloodGroup(bloodGroup);
+            bloodRequest.setPriority(priority);
             bloodRequest.setQuantity(bloodReqRequest.getQuantity());
+            bloodRequest.setIsSupplied(isSupplied);
             return bloodRequestRepository.save(bloodRequest);
         }
         throw new BloodRequestNotFoundException("Blood Request Not Found");
