@@ -30,6 +30,11 @@ public class BloodRequestService {
     @Autowired
     private HospitalRepository hospitalRepository;
 
+    /**
+     * Collections used
+     * java.util.List: Used to store lists of blood requests.
+     */
+
 
     /**
      * Adds a new blood request for a hospital.

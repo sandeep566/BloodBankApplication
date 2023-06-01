@@ -36,6 +36,12 @@ public class SupplyService {
     @Autowired
     private BloodRequestRepository bloodRequestRepository;
 
+
+    /**
+     * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
+     * These collections are utilized to manage and store relevant data within the supply service of the blood bank application.
+     */
+
     /**
      * Adds a new supply report based on the given blood request and blood bank.
      *

@@ -14,6 +14,11 @@ import java.util.Optional;
 
 
 /**
+ * Collections used
+ * java.util.List: Used to store lists of hospitals.
+ */
+
+/**
  * This class provides services related to hospitals.
  */
 @Service

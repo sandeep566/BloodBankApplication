@@ -23,6 +23,17 @@ public class BloodBankService {
 
 
     /**
+     * Collections used
+     *
+     * List<BloodGroup> bloodGroups: Holds the values of the BloodGroup enum.
+     *
+     * Map<BloodGroup, Integer> bloodGroupIntegerMap: Stores blood groups and their quantities in the blood bank.
+     *
+     * List<Donor> donorList: Stores the donors associated with a specific blood bank.
+     */
+
+
+    /**
      * Registers a new blood bank.
      *
      * @param bloodBankRequest The details of the blood bank to be registered.

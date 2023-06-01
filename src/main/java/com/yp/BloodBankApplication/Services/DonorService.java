@@ -26,6 +26,23 @@ public class DonorService {
     @Autowired
     private BloodBankRepository bloodBankRepository;
 
+
+    /**
+     * Collections used
+     *
+     * java.util.List: Used in several places to store lists of donors and blood groups.
+     *
+     * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
+     */
+
+
+
+    /**
+     * Collections used
+     * java.util.List: Used in several places to store lists of donors and blood groups.
+     * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
+     */
+
     /**
      * Registers a new donor and updates the blood bank's blood group quantities accordingly.
      *
@@ -37,8 +54,9 @@ public class DonorService {
      */
 
     public Donor registerDonor(DonorRequest donorRequest, int bloodBankId, BloodGroup bloodGroup){
-        BloodBank bloodBank = bloodBankRepository.findById(bloodBankId).orElse(null);
-        if(bloodBank != null){
+        Optional<BloodBank> optionalBloodBank = bloodBankRepository.findById(bloodBankId);
+        if(optionalBloodBank.isPresent()){
+            BloodBank bloodBank = optionalBloodBank.get();
                 bloodBank.getBloodGroups()
                         .put(bloodGroup,bloodBank.getBloodGroups()
                                 .get(bloodGroup) + donorRequest.getDonationQuantity());
