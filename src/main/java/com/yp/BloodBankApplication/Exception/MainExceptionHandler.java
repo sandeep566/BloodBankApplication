@@ -27,13 +27,6 @@ public class MainExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(BloodGroupNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleException(BloodGroupNotFoundException ex){
-
-        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
 
     @ExceptionHandler(BloodRequestNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(BloodRequestNotFoundException ex){

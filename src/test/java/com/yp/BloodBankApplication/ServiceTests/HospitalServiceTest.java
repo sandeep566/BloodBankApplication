@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 public class HospitalServiceTest {
 
@@ -28,7 +28,7 @@ public class HospitalServiceTest {
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
     }
 
     @Test
@@ -128,7 +128,7 @@ public class HospitalServiceTest {
         when(hospitalRepository.findById(hospitalId)).thenReturn(Optional.of(hospital));
 
         // Act
-        Hospital result = hospitalService.viewHospital(hospitalId);
+        Hospital result = hospitalService.getHospital(hospitalId);
 
         // Assert
         assertNotNull(result);
@@ -147,7 +147,7 @@ public class HospitalServiceTest {
         when(hospitalRepository.findById(hospitalId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(HospitalNotFoundException.class, () -> hospitalService.viewHospital(hospitalId));
+        assertThrows(HospitalNotFoundException.class, () -> hospitalService.getHospital(hospitalId));
         verify(hospitalRepository, times(1)).findById(hospitalId);
     }
 

@@ -3,14 +3,13 @@ package com.yp.BloodBankApplication.ServiceTests;
 import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
-import com.yp.BloodBankApplication.Enums.IsSupplied;
 import com.yp.BloodBankApplication.Enums.Priority;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Exception.BloodRequestNotFoundException;
 import com.yp.BloodBankApplication.Exception.HospitalNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodRequestRepository;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
-import com.yp.BloodBankApplication.Requests.BloodReqRequest;
+import com.yp.BloodBankApplication.Requests.BloodBankHospitalRequest;
 import com.yp.BloodBankApplication.Services.BloodRequestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +44,7 @@ class BloodRequestServiceTest {
     @Test
     void testAddBloodRequest() {
         // Arrange
-        BloodReqRequest bloodRequest = new BloodReqRequest();
+        BloodBankHospitalRequest bloodRequest = new BloodBankHospitalRequest();
         bloodRequest.setId(1);
         bloodRequest.setName("John Doe");
         bloodRequest.setAge(25);
@@ -74,7 +73,7 @@ class BloodRequestServiceTest {
     @Test
     void testAddBloodRequest_HospitalNotFound() {
         // Arrange
-        BloodReqRequest bloodRequest = new BloodReqRequest();
+        BloodBankHospitalRequest bloodRequest = new BloodBankHospitalRequest();
         bloodRequest.setId(1);
         bloodRequest.setName("John Doe");
         bloodRequest.setAge(25);
@@ -99,15 +98,15 @@ class BloodRequestServiceTest {
         // Arrange
         int requestId = 1;
 
-        BloodReqRequest bloodReqRequest = new BloodReqRequest();
-        bloodReqRequest.setId(requestId);
-        bloodReqRequest.setName("John Doe");
-        bloodReqRequest.setAge(25);
-        bloodReqRequest.setQuantity(2);
+        BloodBankHospitalRequest bloodBankHospitalRequest = new BloodBankHospitalRequest();
+        bloodBankHospitalRequest.setId(requestId);
+        bloodBankHospitalRequest.setName("John Doe");
+        bloodBankHospitalRequest.setAge(25);
+        bloodBankHospitalRequest.setQuantity(2);
 
         BloodGroup bloodGroup = BloodGroup.AB_POSITIVE;
         Priority priority = Priority.HIGH;
-        IsSupplied isSupplied = IsSupplied.YES;
+        boolean isSupplied = false;
 
         BloodRequest bloodRequest = new BloodRequest();
         bloodRequest.setBloodRequestId(requestId);
@@ -116,22 +115,22 @@ class BloodRequestServiceTest {
         bloodRequest.setBloodGroup(BloodGroup.AB_NEGATIVE);
         bloodRequest.setPriority(Priority.LOW);
         bloodRequest.setQuantity(1);
-        bloodRequest.setIsSupplied(IsSupplied.NO);
+        bloodRequest.setSupplied(false);
 
         when(bloodRequestRepository.findById(requestId)).thenReturn(Optional.of(bloodRequest));
         when(bloodRequestRepository.save(any(BloodRequest.class))).thenReturn(bloodRequest);
 
         // Act
-        BloodRequest result = bloodRequestService.updateBloodRequest(bloodReqRequest, bloodGroup, priority, isSupplied);
+        BloodRequest result = bloodRequestService.updateBloodRequest(bloodBankHospitalRequest, bloodGroup, priority, isSupplied);
 
         // Assert
         assertNotNull(result);
-        assertEquals(bloodReqRequest.getName(), result.getPatientName());
-        assertEquals(bloodReqRequest.getAge(), result.getAge());
+        assertEquals(bloodBankHospitalRequest.getName(), result.getPatientName());
+        assertEquals(bloodBankHospitalRequest.getAge(), result.getAge());
         assertEquals(bloodGroup, result.getBloodGroup());
         assertEquals(priority, result.getPriority());
-        assertEquals(bloodReqRequest.getQuantity(), result.getQuantity());
-        assertEquals(isSupplied, result.getIsSupplied());
+        assertEquals(bloodBankHospitalRequest.getQuantity(), result.getQuantity());
+        assertEquals(isSupplied, result.isSupplied());
 
         verify(bloodRequestRepository, times(1)).findById(requestId);
         verify(bloodRequestRepository, times(1)).save(any(BloodRequest.class));
@@ -141,23 +140,23 @@ class BloodRequestServiceTest {
     @Test
     void testUpdateBloodRequest_BloodRequestNotFound() {
         // Arrange
-        BloodReqRequest bloodReqRequest = new BloodReqRequest();
-        bloodReqRequest.setId(1);
-        bloodReqRequest.setName("John Doe");
-        bloodReqRequest.setAge(25);
-        bloodReqRequest.setQuantity(2);
+        BloodBankHospitalRequest bloodBankHospitalRequest = new BloodBankHospitalRequest();
+        bloodBankHospitalRequest.setId(1);
+        bloodBankHospitalRequest.setName("John Doe");
+        bloodBankHospitalRequest.setAge(25);
+        bloodBankHospitalRequest.setQuantity(2);
 
         BloodGroup bloodGroup = BloodGroup.AB_POSITIVE;
         Priority priority = Priority.HIGH;
-        IsSupplied isSupplied = IsSupplied.YES;
+        boolean isSupplied = true;
 
-        when(bloodRequestRepository.findById(bloodReqRequest.getId())).thenReturn(Optional.empty());
+        when(bloodRequestRepository.findById(bloodBankHospitalRequest.getId())).thenReturn(Optional.empty());
 
         // Act and Assert
         assertThrows(BloodRequestNotFoundException.class, () ->
-                bloodRequestService.updateBloodRequest(bloodReqRequest, bloodGroup, priority, isSupplied));
+                bloodRequestService.updateBloodRequest(bloodBankHospitalRequest, bloodGroup, priority, isSupplied));
 
-        verify(bloodRequestRepository, times(1)).findById(bloodReqRequest.getId());
+        verify(bloodRequestRepository, times(1)).findById(bloodBankHospitalRequest.getId());
         verify(bloodRequestRepository, never()).save(any(BloodRequest.class));
     }
 

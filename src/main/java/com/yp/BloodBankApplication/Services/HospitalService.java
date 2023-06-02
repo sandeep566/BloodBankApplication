@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.Optional;
 
 
-/**
- * Collections used
- * java.util.List: Used to store lists of hospitals.
- */
 
 /**
  * This class provides services related to hospitals.
+ *
+ * Collections used
+ * java.util.List: Used to store lists of hospitals.
  */
 @Service
 public class HospitalService {
@@ -67,7 +66,7 @@ public class HospitalService {
      * @return The hospital with the specified ID.
      * @throws HospitalNotFoundException if the hospital with the given ID is not found.
      */
-    public Hospital viewHospital(int hospitalId){
+    public Hospital getHospital(int hospitalId){
         Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
         if(hospital.isPresent()){
             return hospital.get();

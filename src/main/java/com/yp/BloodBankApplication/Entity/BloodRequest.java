@@ -2,7 +2,6 @@ package com.yp.BloodBankApplication.Entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
-import com.yp.BloodBankApplication.Enums.IsSupplied;
 import com.yp.BloodBankApplication.Enums.Priority;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,7 @@ public class BloodRequest {
 
     private int quantity;
 
-    private IsSupplied isSupplied;
+    private boolean isSupplied;
 
 
 }

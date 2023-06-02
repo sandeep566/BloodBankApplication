@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class DonorRequest {
 
@@ -22,9 +21,6 @@ public class DonorRequest {
 
     private long phoneNo;
 
-//    private BloodGroup bloodGroup;
-
-//    private List<BloodGroup> bloodGroupList;
 
     private int donationQuantity;
 }

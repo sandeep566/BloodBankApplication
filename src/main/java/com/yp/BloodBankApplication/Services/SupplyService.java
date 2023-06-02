@@ -4,7 +4,6 @@ import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.SupplyReport;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
-import com.yp.BloodBankApplication.Enums.IsSupplied;
 import com.yp.BloodBankApplication.Exception.*;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.BloodRequestRepository;
@@ -20,7 +19,12 @@ import java.util.Optional;
 
 /**
  * Service class that handles operations related to supply reports in the Blood Bank Application.
+ *
+ * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
+ * These collections are utilized to manage and store relevant data within the supply service of the blood bank application.
+ *
  */
+
 @Service
 public class SupplyService {
 
@@ -37,10 +41,6 @@ public class SupplyService {
     private BloodRequestRepository bloodRequestRepository;
 
 
-    /**
-     * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
-     * These collections are utilized to manage and store relevant data within the supply service of the blood bank application.
-     */
 
     /**
      * Adds a new supply report based on the given blood request and blood bank.
@@ -67,7 +67,7 @@ public class SupplyService {
                     bloodGroups.put(bloodRequest.getBloodGroup(),bloodGroups.get(bloodRequest.getBloodGroup()) - bloodRequest.getQuantity());
                     bloodBank.get().setBloodGroups(bloodGroups);
                     bloodBankRepository.save(bloodBank.get());
-                    bloodRequest.setIsSupplied(IsSupplied.YES);
+                    bloodRequest.setSupplied(true);
                     bloodRequestRepository.save(bloodRequest);
                     return supplyRepository.save(supplyReport);
                 }

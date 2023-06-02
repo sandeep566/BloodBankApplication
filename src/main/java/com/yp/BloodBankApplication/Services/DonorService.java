@@ -8,6 +8,7 @@ import com.yp.BloodBankApplication.Exception.DonorNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.DonorRepository;
 import com.yp.BloodBankApplication.Requests.DonorRequest;
+import com.yp.BloodBankApplication.Utility.BloodGroupMatchUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,10 @@ import java.util.stream.Collectors;
 
 /**
  * This class provides services related to donors.
+ *
+ * Collections used
+ * java.util.List: Used in several places to store lists of donors and blood groups.
+ * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
  */
 @Service
 public class DonorService {
@@ -27,21 +32,9 @@ public class DonorService {
     private BloodBankRepository bloodBankRepository;
 
 
-    /**
-     * Collections used
-     *
-     * java.util.List: Used in several places to store lists of donors and blood groups.
-     *
-     * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
-     */
 
 
 
-    /**
-     * Collections used
-     * java.util.List: Used in several places to store lists of donors and blood groups.
-     * java.util.Map: Used in the BloodBank entity to store blood groups and their quantities.
-     */
 
     /**
      * Registers a new donor and updates the blood bank's blood group quantities accordingly.
@@ -57,28 +50,9 @@ public class DonorService {
         Optional<BloodBank> optionalBloodBank = bloodBankRepository.findById(bloodBankId);
         if(optionalBloodBank.isPresent()){
             BloodBank bloodBank = optionalBloodBank.get();
-                bloodBank.getBloodGroups()
-                        .put(bloodGroup,bloodBank.getBloodGroups()
-                                .get(bloodGroup) + donorRequest.getDonationQuantity());
-
-                List<BloodGroup> suitableBloodGroups = new ArrayList<>();
-                switch (bloodGroup){
-
-                    case A_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.A_POSITIVE,BloodGroup.AB_POSITIVE);
-                    case B_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.B_POSITIVE,BloodGroup.AB_POSITIVE);
-                    case O_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.O_POSITIVE,BloodGroup.A_POSITIVE,BloodGroup.B_POSITIVE,BloodGroup.AB_POSITIVE);
-                    case AB_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.AB_POSITIVE);
-                    case A_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.A_POSITIVE,BloodGroup.A_NEGATIVE,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-                    case O_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.values());
-                    case B_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.B_POSITIVE,BloodGroup.B_NEGATIVE,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-                    case AB_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-                }
-
-                Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(),
-                        donorRequest.getAddress(), donorRequest.getPhoneNo(),
-                        bloodGroup,suitableBloodGroups,bloodBank,
-                        donorRequest.getDonationQuantity());
-
+                bloodBank.getBloodGroups().put(bloodGroup,bloodBank.getBloodGroups().get(bloodGroup) + donorRequest.getDonationQuantity());
+            List<BloodGroup> suitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+                Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(), donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
                 return donorRepository.save(donor);
         }else{
             throw new BloodBankNotFoundException("Blood Bank Not Found");
@@ -101,30 +75,19 @@ public class DonorService {
         if(optionalDonor.isPresent()){
             int bloodBankId = donorRepository.findBloodBankIdByDonorId(donorRequest.getDonorId());
             BloodBank bloodBank = bloodBankRepository.findById(bloodBankId).orElse(null);
+            assert bloodBank != null;
             Map<BloodGroup,Integer> bloodGroups = bloodBank.getBloodGroups();
             Donor donor = optionalDonor.get();
             donor.setDonorName(donorRequest.getDonorName());
             donor.setAddress(donorRequest.getAddress());
             donor.setAge(donorRequest.getAge());
-            List<BloodGroup> suitableBloodGroups = new ArrayList<>();
-            switch (bloodGroup){
-
-                case A_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.A_POSITIVE,BloodGroup.AB_POSITIVE);
-                case B_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.B_POSITIVE,BloodGroup.AB_POSITIVE);
-                case O_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.O_POSITIVE,BloodGroup.A_POSITIVE,BloodGroup.B_POSITIVE,BloodGroup.AB_POSITIVE);
-                case AB_POSITIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.AB_POSITIVE);
-                case A_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.A_POSITIVE,BloodGroup.A_NEGATIVE,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-                case O_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.values());
-                case B_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.B_POSITIVE,BloodGroup.B_NEGATIVE,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-                case AB_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-            }
+            List<BloodGroup> suitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
             donor.setBloodGroupsMatch(suitableBloodGroups);
-            int bloodBankQuantity = bloodGroups.get(donor.getBloodGroup()) - donor.getDonationQuantity();
+            int bloodBankQuantity = bloodGroups.getOrDefault(donor.getBloodGroup(), 0) - donor.getDonationQuantity();
             bloodGroups.put(donor.getBloodGroup(),bloodBankQuantity);
             donor.setDonationQuantity(donorRequest.getDonationQuantity());
             donor.setBloodGroup(bloodGroup);
             bloodGroups.put(bloodGroup,bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
-            System.out.println(bloodBankQuantity);
             bloodBank.setBloodGroups(bloodGroups);
             bloodBankRepository.save(bloodBank);
             return donorRepository.save(donor);
@@ -173,6 +136,14 @@ public class DonorService {
         return donors.stream().filter(donor -> donor.getBloodGroup().equals(bloodGroup)).collect(Collectors.toList());
     }
 
+
+    /**
+     * Deletes a blood donor with the specified donor ID.
+     *
+     * @param donorId The ID of the donor to be deleted.
+     * @return A success message if the donor is deleted successfully.
+     * @throws DonorNotFoundException If the donor with the specified ID is not found.
+     */
     public String deleteDonor(int donorId){
         Optional<Donor> donor = donorRepository.findById(donorId);
         if(donor.isPresent()){
@@ -182,9 +153,28 @@ public class DonorService {
         throw new DonorNotFoundException("Donor not found");
     }
 
+
+    /**
+     * Retrieves a list of blood donors with the specified age.
+     *
+     * @param age The age to filter the donors by.
+     * @return A list of donors with the specified age.
+     */
     public List<Donor> viewDonorsByAge(int age){
         List<Donor> donors = donorRepository.findAll();
         return donors.stream().filter(donor -> donor.getAge() == age).toList();
+    }
+
+
+    /**
+     * Retrieves a list of blood donors with suitable blood groups.
+     *
+     * @param bloodGroups The list of blood groups to filter the donors by.
+     * @return A list of donors with blood groups matching all the specified blood groups.
+     */
+    public List<Donor> viewDonorsBySuitableBloodGroup(List<BloodGroup> bloodGroups){
+        List<Donor> donors = donorRepository.findAll();
+        return donors.stream().filter(donor -> new HashSet<>(donor.getBloodGroupsMatch()).containsAll(bloodGroups)).toList();
     }
 
 
