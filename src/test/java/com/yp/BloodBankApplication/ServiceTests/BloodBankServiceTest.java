@@ -32,6 +32,7 @@ class BloodBankServiceTest {
         MockitoAnnotations.openMocks(this);
     }
 
+
     @Test
     void testRegisterBloodBank() {
         // Create a BloodBankRequest object with the desired values

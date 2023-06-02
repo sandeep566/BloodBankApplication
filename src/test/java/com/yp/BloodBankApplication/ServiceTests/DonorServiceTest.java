@@ -363,5 +363,26 @@ class DonorServiceTest {
         return donor;
     }
 
+    @Test
+    public void testViewDonorsBySuitableBloodGroup() {
+        List<BloodGroup> bloodGroups = new ArrayList<>();
+        bloodGroups.add(BloodGroup.A_POSITIVE);
+        bloodGroups.add(BloodGroup.B_POSITIVE);
+
+        // Create a list of sample donors
+        List<Donor> donors = new ArrayList<>();
+        // Add sample donors to the list
+
+        Mockito.when(donorRepository.findAll()).thenReturn(donors);
+
+        List<Donor> expectedDonors = new ArrayList<>();
+        // Add the expected donors to the list based on the provided blood groups
+
+        List<Donor> actualDonors = donorService.viewDonorsBySuitableBloodGroup(bloodGroups);
+
+        Assertions.assertEquals(expectedDonors, actualDonors);
+        Mockito.verify(donorRepository, Mockito.times(1)).findAll();
+    }
+
 
 }
