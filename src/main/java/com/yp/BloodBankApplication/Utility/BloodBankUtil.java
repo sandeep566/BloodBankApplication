@@ -66,7 +66,7 @@ public class BloodBankUtil {
      * Used to map bloodBankHospitalRequest to bloodRequest
      * @param bloodRequest
      * @param bloodBankHospitalRequest
-     * @return 
+     * @return BloodRequest
      */
     public static BloodRequest mapToBloodRequest(BloodRequest bloodRequest, BloodBankHospitalRequest bloodBankHospitalRequest){
         bloodRequest.setPatientName(bloodBankHospitalRequest.getName());
