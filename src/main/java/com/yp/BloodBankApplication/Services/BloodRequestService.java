@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToBloodRequest;
+
 
 /**
  * This class provides services related to blood requests.
@@ -58,6 +60,7 @@ public class BloodRequestService {
     }
 
 
+
     /**
      * Updates an existing blood request.
      *
@@ -69,11 +72,9 @@ public class BloodRequestService {
                                            Priority priority, boolean isSupplied){
         BloodRequest bloodRequest = bloodRequestRepository.findById(bloodBankHospitalRequest.getId()).orElse(null);
         if(bloodRequest != null){
-            bloodRequest.setPatientName(bloodBankHospitalRequest.getName());
-            bloodRequest.setAge(bloodBankHospitalRequest.getAge());
+            mapToBloodRequest(bloodRequest,bloodBankHospitalRequest);
             bloodRequest.setBloodGroup(bloodGroup);
             bloodRequest.setPriority(priority);
-            bloodRequest.setQuantity(bloodBankHospitalRequest.getQuantity());
             bloodRequest.setSupplied(false);
             return bloodRequestRepository.save(bloodRequest);
         }

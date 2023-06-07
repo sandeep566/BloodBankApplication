@@ -1,6 +1,7 @@
 package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.BloodBank;
+import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.Donor;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
@@ -8,12 +9,14 @@ import com.yp.BloodBankApplication.Exception.DonorNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.DonorRepository;
 import com.yp.BloodBankApplication.Requests.DonorRequest;
-import com.yp.BloodBankApplication.Utility.BloodGroupMatchUtil;
+import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToDonor;
 
 /**
  * This class provides services related to donors.
@@ -51,7 +54,7 @@ public class DonorService {
         if(optionalBloodBank.isPresent()){
             BloodBank bloodBank = optionalBloodBank.get();
                 bloodBank.getBloodGroups().put(bloodGroup,bloodBank.getBloodGroups().get(bloodGroup) + donorRequest.getDonationQuantity());
-            List<BloodGroup> suitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+            List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
                 Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(), donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
                 return donorRepository.save(donor);
         }else{
@@ -59,6 +62,7 @@ public class DonorService {
         }
 
     }
+
 
     /**
      * Updates the information and blood group of an existing donor and adjusts the blood bank's blood group quantities accordingly.
@@ -69,6 +73,7 @@ public class DonorService {
      * @throws DonorNotFoundException    if the donor with the given ID is not found.
      */
 
+
     public Donor updateDonor(DonorRequest donorRequest,BloodGroup bloodGroup){
         Optional<Donor> optionalDonor = donorRepository.findById(donorRequest.getDonorId());
 
@@ -77,15 +82,11 @@ public class DonorService {
             BloodBank bloodBank = bloodBankRepository.findById(bloodBankId).orElse(null);
             assert bloodBank != null;
             Map<BloodGroup,Integer> bloodGroups = bloodBank.getBloodGroups();
-            Donor donor = optionalDonor.get();
-            donor.setDonorName(donorRequest.getDonorName());
-            donor.setAddress(donorRequest.getAddress());
-            donor.setAge(donorRequest.getAge());
-            List<BloodGroup> suitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+            Donor donor = mapToDonor( optionalDonor.get() , donorRequest);
+            List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
             donor.setBloodGroupsMatch(suitableBloodGroups);
             int bloodBankQuantity = bloodGroups.getOrDefault(donor.getBloodGroup(), 0) - donor.getDonationQuantity();
             bloodGroups.put(donor.getBloodGroup(),bloodBankQuantity);
-            donor.setDonationQuantity(donorRequest.getDonationQuantity());
             donor.setBloodGroup(bloodGroup);
             bloodGroups.put(bloodGroup,bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
             bloodBank.setBloodGroups(bloodGroups);

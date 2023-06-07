@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToBloodBank;
+
 /**
  * Service class for managing blood banks and their operations.
  */
@@ -57,14 +59,11 @@ public class BloodBankService {
      * @throws BloodBankNotFoundException If the blood bank is not found.
      */
 
+
     public BloodBank updateBloodBank(BloodBankRequest bloodBankRequest){
         BloodBank bank = bloodBankRepository.findById(bloodBankRequest.getBloodBankId()).orElse(null);
         if(bank != null){
-            bank.setBloodBankName(bloodBankRequest.getBloodBankName());
-            bank.setAddress(bloodBankRequest.getAddress());
-            bank.setPhoneNumber(bloodBankRequest.getPhoneNo());
-            bank.setMailAddress(bloodBankRequest.getMailAddress());
-            return bloodBankRepository.save(bank);
+            return bloodBankRepository.save(mapToBloodBank(bank,bloodBankRequest));
         }
         throw new BloodBankNotFoundException("Blood Bank Not Found");
     }

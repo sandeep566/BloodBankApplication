@@ -4,7 +4,6 @@ import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Exception.HospitalNotFoundException;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToHospital;
 
 
 /**
@@ -39,6 +39,7 @@ public class HospitalService {
     }
 
 
+
     /**
      * Updates an existing hospital.
      *
@@ -47,13 +48,9 @@ public class HospitalService {
      * @throws HospitalNotFoundException if the hospital with the given ID is not found.
      */
     public Hospital updateHospital(HospitalRequest hospitalRequest){
-        Optional<Hospital> optionalHospital = hospitalRepository.findById(hospitalRequest.getHospitalId());
-        if(optionalHospital.isPresent()){
-            Hospital hospital1 = optionalHospital.get();
-            hospital1.setHospitalName(hospitalRequest.getHospitalName());
-            hospital1.setAddress(hospitalRequest.getAddress());
-            hospital1.setPhoneNo(hospitalRequest.getPhoneNo());
-            return hospitalRepository.save(hospital1);
+        Hospital hospital = hospitalRepository.findById(hospitalRequest.getHospitalId()).orElse(null);
+        if(hospital != null){
+            return hospitalRepository.save(mapToHospital(hospital,hospitalRequest));
         }
         throw new HospitalNotFoundException("Hospital Not Found");
     }
