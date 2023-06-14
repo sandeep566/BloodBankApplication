@@ -10,6 +10,7 @@ import com.yp.BloodBankApplication.Services.SupplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class SupplyController {
      * @return ResponseEntity containing the created supply report and HTTP status code.
      */
     @PostMapping("/add/{bloodRequestId}/{bloodBankId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<SupplyReport> createSupplyReport(@PathVariable int bloodRequestId,
                                                           @PathVariable int bloodBankId){
         return new ResponseEntity<>(supplyService.addSupplyReport(bloodRequestId,
@@ -43,6 +45,7 @@ public class SupplyController {
      * @return ResponseEntity containing a success message and HTTP status code.
      */
     @DeleteMapping("/delete/{supplyId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteSupplyReport(@PathVariable int supplyId){
         return new ResponseEntity<>(supplyService.deleteSupplyReport(supplyId),HttpStatus.OK);
     }

@@ -1,10 +1,15 @@
 package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.Hospital;
+import com.yp.BloodBankApplication.Entity.User;
+import com.yp.BloodBankApplication.Exception.HospitalAlreadyExistsException;
 import com.yp.BloodBankApplication.Exception.HospitalNotFoundException;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
+import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,6 +31,12 @@ public class HospitalService {
     @Autowired
     private HospitalRepository hospitalRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     /**
      * Adds a new hospital.
@@ -34,8 +45,16 @@ public class HospitalService {
      * @return The added hospital.
      */
     public Hospital addHospital(HospitalRequest hospitalRequest){
-        Hospital hospital = new Hospital(hospitalRequest.getHospitalId(), hospitalRequest.getHospitalName(), hospitalRequest.getAddress(), hospitalRequest.getPhoneNo(), new ArrayList<>());
-        return hospitalRepository.save(hospital);
+
+        if(! isUsernamePresent(hospitalRequest.getEmail())){
+            if( !isPhoneNumberPresent(hospitalRequest.getPhoneNo())){
+                Hospital hospital = new Hospital(hospitalRequest.getHospitalId(), hospitalRequest.getHospitalName(), hospitalRequest.getAddress(),hospitalRequest.getEmail() ,hospitalRequest.getPhoneNo(), new ArrayList<>());
+                userRepository.save(BloodBankUtil.mapHospitalToUser(hospitalRequest,passwordEncoder));
+                return hospitalRepository.save(hospital);
+            }
+            throw new HospitalAlreadyExistsException("Account already exists with this email");
+        }
+        throw new HospitalAlreadyExistsException("Account already present with this phone number");
     }
 
 
@@ -49,7 +68,10 @@ public class HospitalService {
      */
     public Hospital updateHospital(HospitalRequest hospitalRequest){
         Hospital hospital = hospitalRepository.findById(hospitalRequest.getHospitalId()).orElse(null);
+        User user = userRepository.findByUserName(hospitalRequest.getEmail()).orElse(null);
         if(hospital != null){
+            user.setUserPassword(passwordEncoder.encode(hospitalRequest.getPassword()));
+            userRepository.save(user);
             return hospitalRepository.save(mapToHospital(hospital,hospitalRequest));
         }
         throw new HospitalNotFoundException("Hospital Not Found");
@@ -95,6 +117,15 @@ public class HospitalService {
      */
     public List<Hospital> viewAllHospitals(){
         return hospitalRepository.findAll();
+    }
+
+
+    private boolean isUsernamePresent(String username){
+        return userRepository.findByUserName(username).isPresent();
+    }
+
+    private boolean isPhoneNumberPresent(long phoneNumber){
+        return hospitalRepository.findByPhoneNo(phoneNumber).isPresent();
     }
 
 

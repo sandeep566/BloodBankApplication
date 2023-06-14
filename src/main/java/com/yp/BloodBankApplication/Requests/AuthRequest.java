@@ -5,13 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class HospitalRequest {
+public class AuthRequest {
 
-    private int hospitalId;
-    private String hospitalName;
-    private String address;
-    private long phoneNo;
-    private String email;
+    private String username;
     private String password;
 }

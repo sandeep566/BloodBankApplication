@@ -11,16 +11,35 @@ import java.util.List;
 @NoArgsConstructor
 public class DonorRequest {
 
+    /**
+     * The ID of the donor.
+     */
     private int donorId;
 
+
+    /**
+     * The name of the donor.
+     */
     private String donorName;
 
+
+    /**
+     * The age of the donor.
+     */
     private int age;
 
+    /**
+     * The address of the donor.
+     */
     private String address;
 
+    /**
+     * The phone number of the donor.
+     */
     private long phoneNo;
 
-
+    /**
+     * The quantity of blood donated by the donor.
+     */
     private int donationQuantity;
 }

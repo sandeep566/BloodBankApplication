@@ -7,10 +7,17 @@ import com.yp.BloodBankApplication.Response.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
+/**
+ * Global exception handler for handling specific exceptions.
+ */
 @RestControllerAdvice
 public class MainExceptionHandler {
 
 
+    /**
+     * Exception handler for handling HospitalNotFoundException.
+     */
     @ExceptionHandler(HospitalNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(HospitalNotFoundException ex){
 
@@ -19,6 +26,10 @@ public class MainExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 
     }
+
+    /**
+     * Exception handler for handling BloodBankNotFoundException.
+     */
     @ExceptionHandler(BloodBankNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(BloodBankNotFoundException ex){
 
@@ -28,6 +39,9 @@ public class MainExceptionHandler {
     }
 
 
+    /**
+     * Exception handler for handling BloodRequestNotFoundException.
+     */
     @ExceptionHandler(BloodRequestNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(BloodRequestNotFoundException ex){
 
@@ -35,6 +49,12 @@ public class MainExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+
+
+    /**
+     * Exception handler for handling DonorNotFoundException.
+     */
     @ExceptionHandler(DonorNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(DonorNotFoundException ex){
 
@@ -42,19 +62,43 @@ public class MainExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
+
+    /**
+     * Exception handler for handling BloodNotSufficientException.
+     */
     @ExceptionHandler(BloodNotSufficientException.class)
     public ResponseEntity<ErrorResponse> handleException(BloodNotSufficientException ex){
 
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_ACCEPTABLE);
     }
 
+
+
+    /**
+     * Exception handler for handling ReportNotFoundException.
+     */
     @ExceptionHandler(ReportNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(ReportNotFoundException ex){
 
         ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(BloodBankAlreadyPresentException.class)
+    public ResponseEntity<ErrorResponse> handleException(BloodBankAlreadyPresentException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HospitalAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleException(HospitalAlreadyExistsException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }

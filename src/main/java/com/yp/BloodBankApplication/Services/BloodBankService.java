@@ -2,11 +2,16 @@ package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Entity.Donor;
+import com.yp.BloodBankApplication.Entity.User;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Exception.BloodBankAlreadyPresentException;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
+import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
+import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,7 +26,12 @@ import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToBloodBank;
 public class BloodBankService {
 
     @Autowired
+    private UserRepository userRepository;
+    @Autowired
     private BloodBankRepository bloodBankRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     /**
@@ -47,8 +57,16 @@ public class BloodBankService {
         for(BloodGroup bg : bloodGroups){
             bloodGroupIntegerMap.put(bg,0);
         }
-        BloodBank bloodBank = new BloodBank(bloodBankRequest.getBloodBankId(), bloodBankRequest.getBloodBankName(), bloodBankRequest.getAddress(), bloodBankRequest.getPhoneNo(),new ArrayList<>(),bloodBankRequest.getMailAddress(),bloodGroupIntegerMap);
-        return bloodBankRepository.save(bloodBank);
+        if( ! isUsernamePresent(bloodBankRequest.getMailAddress())){
+            if( ! isPhoneNumberPresent(bloodBankRequest.getPhoneNo())){
+                BloodBank bloodBank = new BloodBank(bloodBankRequest.getBloodBankId(), bloodBankRequest.getBloodBankName(), bloodBankRequest.getAddress(), bloodBankRequest.getPhoneNo(),new ArrayList<>(),bloodBankRequest.getMailAddress(),bloodBankRequest.getPassword(),bloodGroupIntegerMap);
+                userRepository.save(BloodBankUtil.mapBloodBankToUser(bloodBankRequest,passwordEncoder));
+                return bloodBankRepository.save(bloodBank);
+            }
+            throw new BloodBankAlreadyPresentException("PhoneNumber already present");
+        }
+        throw new BloodBankAlreadyPresentException("Username alredy present");
+
     }
 
     /**
@@ -62,7 +80,10 @@ public class BloodBankService {
 
     public BloodBank updateBloodBank(BloodBankRequest bloodBankRequest){
         BloodBank bank = bloodBankRepository.findById(bloodBankRequest.getBloodBankId()).orElse(null);
+        User user = userRepository.findByUserName(bloodBankRequest.getMailAddress()).orElse(null);
         if(bank != null){
+            user.setUserPassword(passwordEncoder.encode(bloodBankRequest.getPassword()));
+            userRepository.save(user);
             return bloodBankRepository.save(mapToBloodBank(bank,bloodBankRequest));
         }
         throw new BloodBankNotFoundException("Blood Bank Not Found");
@@ -142,5 +163,13 @@ public class BloodBankService {
             return bloodBank.get().getBloodGroups();
         }
         throw new BloodBankNotFoundException("Blood Bank Not Found");
+    }
+
+    private boolean isUsernamePresent(String username){
+        return userRepository.findByUserName(username).isPresent();
+    }
+
+    private boolean isPhoneNumberPresent(long phoneNumber){
+        return bloodBankRepository.findByPhoneNumber(phoneNumber).isPresent();
     }
 }

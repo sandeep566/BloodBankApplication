@@ -2,7 +2,7 @@ package com.yp.BloodBankApplication.ServiceTests;
 
 
 import com.yp.BloodBankApplication.Enums.BloodGroup;
-import com.yp.BloodBankApplication.Utility.BloodGroupMatchUtil;
+import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class BloodGroupMatchUtilTest {
         BloodGroup bloodGroup = BloodGroup.A_POSITIVE;
         List<BloodGroup> expectedSuitableBloodGroups = Arrays.asList(BloodGroup.A_POSITIVE, BloodGroup.AB_POSITIVE);
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -27,7 +27,7 @@ public class BloodGroupMatchUtilTest {
         BloodGroup bloodGroup = BloodGroup.B_POSITIVE;
         List<BloodGroup> expectedSuitableBloodGroups = Arrays.asList(BloodGroup.B_POSITIVE, BloodGroup.AB_POSITIVE);
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -39,7 +39,7 @@ public class BloodGroupMatchUtilTest {
                 BloodGroup.O_POSITIVE, BloodGroup.A_POSITIVE, BloodGroup.B_POSITIVE, BloodGroup.AB_POSITIVE
         );
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -49,7 +49,7 @@ public class BloodGroupMatchUtilTest {
         BloodGroup bloodGroup = BloodGroup.AB_POSITIVE;
         List<BloodGroup> expectedSuitableBloodGroups = Collections.singletonList(BloodGroup.AB_POSITIVE);
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -61,7 +61,7 @@ public class BloodGroupMatchUtilTest {
                 BloodGroup.A_POSITIVE, BloodGroup.A_NEGATIVE, BloodGroup.AB_POSITIVE, BloodGroup.AB_NEGATIVE
         );
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -73,7 +73,7 @@ public class BloodGroupMatchUtilTest {
                 BloodGroup.values()
         );
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -85,7 +85,7 @@ public class BloodGroupMatchUtilTest {
                 BloodGroup.B_POSITIVE, BloodGroup.B_NEGATIVE, BloodGroup.AB_POSITIVE, BloodGroup.AB_NEGATIVE
         );
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }
@@ -97,7 +97,7 @@ public class BloodGroupMatchUtilTest {
                 BloodGroup.AB_POSITIVE, BloodGroup.AB_NEGATIVE
         );
 
-        List<BloodGroup> actualSuitableBloodGroups = BloodGroupMatchUtil.getSuitableBloodGroups(bloodGroup);
+        List<BloodGroup> actualSuitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
 
         Assertions.assertEquals(expectedSuitableBloodGroups, actualSuitableBloodGroups);
     }

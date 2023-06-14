@@ -12,6 +12,7 @@ import com.yp.BloodBankApplication.Services.DonorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public class DonorController {
      * @return ResponseEntity containing the newly registered donor and HTTP status code.
      */
     @PostMapping("/add/{bloodBankId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Donor> addDonor(@RequestBody DonorRequest donorRequest , @PathVariable int bloodBankId, @RequestParam("bloodGroup") BloodGroup bloodGroup){
         return new ResponseEntity<>(donorService.registerDonor(donorRequest,bloodBankId,bloodGroup), HttpStatus.OK);
     }
@@ -46,6 +48,7 @@ public class DonorController {
      */
 
     @PutMapping("/update")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Donor> updateDonor(@RequestBody DonorRequest donorRequest,@RequestParam("bloodGroup") BloodGroup bloodGroup){
         return new ResponseEntity<>(donorService.updateDonor(donorRequest,bloodGroup),HttpStatus.OK);
     }
@@ -93,6 +96,7 @@ public class DonorController {
      * @return ResponseEntity containing a success message and HTTP status code.
      */
     @DeleteMapping("/delete/{donorId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> removeDonor(@PathVariable int donorId){
         return new ResponseEntity<>(donorService.deleteDonor(donorId),HttpStatus.OK);
     }

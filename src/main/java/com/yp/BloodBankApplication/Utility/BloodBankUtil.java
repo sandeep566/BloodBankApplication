@@ -1,14 +1,12 @@
 package com.yp.BloodBankApplication.Utility;
 
-import com.yp.BloodBankApplication.Entity.BloodBank;
-import com.yp.BloodBankApplication.Entity.BloodRequest;
-import com.yp.BloodBankApplication.Entity.Donor;
-import com.yp.BloodBankApplication.Entity.Hospital;
+import com.yp.BloodBankApplication.Entity.*;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Requests.BloodBankHospitalRequest;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
 import com.yp.BloodBankApplication.Requests.DonorRequest;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +26,6 @@ public class BloodBankUtil {
             case O_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.values());
             case B_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.B_POSITIVE,BloodGroup.B_NEGATIVE,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
             case AB_NEGATIVE -> Collections.addAll(suitableBloodGroups,BloodGroup.AB_POSITIVE,BloodGroup.AB_NEGATIVE);
-            default -> System.exit(0);
         }
         return suitableBloodGroups;
     }
@@ -58,6 +55,7 @@ public class BloodBankUtil {
         bloodBank.setAddress(bloodBankRequest.getAddress());
         bloodBank.setPhoneNumber(bloodBankRequest.getPhoneNo());
         bloodBank.setMailAddress(bloodBankRequest.getMailAddress());
+        bloodBank.setPassword(bloodBankRequest.getPassword());
         return bloodBank;
     }
 
@@ -73,6 +71,16 @@ public class BloodBankUtil {
         bloodRequest.setAge(bloodBankHospitalRequest.getAge());
         bloodRequest.setQuantity(bloodBankHospitalRequest.getQuantity());
         return bloodRequest;
+    }
+
+    public static User mapBloodBankToUser(BloodBankRequest bloodBankRequest, PasswordEncoder passwordEncoder){
+        User user = new User(bloodBankRequest.getBloodBankId(), bloodBankRequest.getMailAddress(), passwordEncoder.encode(bloodBankRequest.getPassword()), "ROLE_ADMIN");
+        return user;
+    }
+
+    public static User mapHospitalToUser(HospitalRequest hospitalRequest,PasswordEncoder passwordEncoder){
+        User user = new User(hospitalRequest.getHospitalId(), hospitalRequest.getEmail(), passwordEncoder.encode(hospitalRequest.getPassword()), "ROLE_USER");
+        return user;
     }
 
 }
