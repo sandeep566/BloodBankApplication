@@ -1,14 +1,22 @@
 package com.yp.BloodBankApplication.ServiceTests;
 
+import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Entity.Hospital;
+import com.yp.BloodBankApplication.Entity.User;
+import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Exception.HospitalNotFoundException;
+import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
+import com.yp.BloodBankApplication.Repository.UserRepository;
+import com.yp.BloodBankApplication.Requests.BloodBankRequest;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import com.yp.BloodBankApplication.Services.BloodBankService;
 import com.yp.BloodBankApplication.Services.HospitalService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +31,19 @@ public class HospitalServiceTest {
     @Mock
     private HospitalRepository hospitalRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private BloodBankRepository bloodBankRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private HospitalService hospitalService;
+
+    @InjectMocks
+    private BloodBankService bloodBankService;
 
     @BeforeEach
     public void setup() {
@@ -61,40 +80,60 @@ public class HospitalServiceTest {
     }
 
     @Test
-    public void testUpdateHospital() {
+    void testUpdateBloodBank_WithValidInputs_ShouldReturnUpdatedBloodBank() {
         // Arrange
-        HospitalRequest hospitalRequest = new HospitalRequest();
-        hospitalRequest.setHospitalId(1);
-        hospitalRequest.setHospitalName("Updated Hospital");
-        hospitalRequest.setAddress("456 Main St");
-        hospitalRequest.setPhoneNo(987654321);
+        BloodBankRequest bloodBankRequest = new BloodBankRequest();
+        bloodBankRequest.setBloodBankId(1);
+        bloodBankRequest.setMailAddress("test@example.com");
+        bloodBankRequest.setPassword("password123");
 
-        Hospital existingHospital = new Hospital();
-        existingHospital.setHospitalId(hospitalRequest.getHospitalId());
-        existingHospital.setHospitalName("Hospital 1");
-        existingHospital.setAddress("123 Main St");
-        existingHospital.setPhoneNo(1234567890);
+        BloodBank existingBank = new BloodBank();
+        existingBank.setBloodBankId(1);
 
-        Hospital updatedHospital = new Hospital();
-        updatedHospital.setHospitalId(hospitalRequest.getHospitalId());
-        updatedHospital.setHospitalName(hospitalRequest.getHospitalName());
-        updatedHospital.setAddress(hospitalRequest.getAddress());
-        updatedHospital.setPhoneNo(hospitalRequest.getPhoneNo());
+        User existingUser = new User();
+        existingUser.setUserName("test@example.com");
 
-        when(hospitalRepository.findById(hospitalRequest.getHospitalId())).thenReturn(Optional.of(existingHospital));
-        when(hospitalRepository.save(any(Hospital.class))).thenReturn(updatedHospital);
+        when(bloodBankRepository.findById(1)).thenReturn(Optional.of(existingBank));
+        when(userRepository.findByUserName("test@example.com")).thenReturn(Optional.of(existingUser));
+        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
+        when(userRepository.save(existingUser)).thenReturn(existingUser);
+        when(bloodBankRepository.save(existingBank)).thenReturn(existingBank);
 
         // Act
-        Hospital result = hospitalService.updateHospital(hospitalRequest);
+        BloodBank updatedBank = bloodBankService.updateBloodBank(bloodBankRequest);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(hospitalRequest.getHospitalId(), result.getHospitalId());
-        assertEquals(hospitalRequest.getHospitalName(), result.getHospitalName());
-        assertEquals(hospitalRequest.getAddress(), result.getAddress());
-        assertEquals(hospitalRequest.getPhoneNo(), result.getPhoneNo());
-        verify(hospitalRepository, times(1)).findById(hospitalRequest.getHospitalId());
-        verify(hospitalRepository, times(1)).save(any(Hospital.class));
+        assertNotNull(updatedBank);
+        assertEquals(existingBank, updatedBank);
+        assertEquals("encodedPassword", existingUser.getUserPassword());
+        verify(bloodBankRepository).findById(1);
+        verify(userRepository).findByUserName("test@example.com");
+        verify(passwordEncoder).encode("password123");
+        verify(userRepository).save(existingUser);
+        verify(bloodBankRepository).save(existingBank);
+    }
+
+    @Test
+    void testUpdateBloodBank_WithInvalidUserName_ShouldThrowException() {
+        // Arrange
+        BloodBankRequest bloodBankRequest = new BloodBankRequest();
+        bloodBankRequest.setBloodBankId(1);
+        bloodBankRequest.setMailAddress("test@example.com");
+        bloodBankRequest.setPassword("password123");
+
+        BloodBank existingBank = new BloodBank();
+        existingBank.setBloodBankId(1);
+
+        when(bloodBankRepository.findById(1)).thenReturn(Optional.of(existingBank));
+        when(userRepository.findByUserName("test@example.com")).thenReturn(Optional.empty());
+
+        // Act and Assert
+        assertThrows(BloodBankNotFoundException.class, () -> bloodBankService.updateBloodBank(bloodBankRequest));
+        verify(bloodBankRepository).findById(1);
+        verify(userRepository).findByUserName("test@example.com");
+        verify(passwordEncoder, never()).encode(anyString());
+        verify(userRepository, never()).save(any(User.class));
+        verify(bloodBankRepository, never()).save(any(BloodBank.class));
     }
 
     @Test
@@ -190,8 +229,8 @@ public class HospitalServiceTest {
     public void testViewAllHospitals() {
         // Arrange
         List<Hospital> hospitals = new ArrayList<>();
-        hospitals.add(new Hospital(1, "Hospital 1", "123 Main St", 1234567890,new ArrayList<>()));
-        hospitals.add(new Hospital(2, "Hospital 2", "456 Main St", 987654321, new ArrayList<>()));
+        hospitals.add(new Hospital(1, "Hospital 1", "123 Main St","hos1@gmail.com", 1234567890,new ArrayList<>()));
+        hospitals.add(new Hospital(2, "Hospital 2", "456 Main St","hos2@gmail.com" ,987654321, new ArrayList<>()));
 
         when(hospitalRepository.findAll()).thenReturn(hospitals);
 

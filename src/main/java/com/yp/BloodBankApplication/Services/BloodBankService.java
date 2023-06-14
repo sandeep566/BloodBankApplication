@@ -25,15 +25,6 @@ import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToBloodBank;
 @Service
 public class BloodBankService {
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private BloodBankRepository bloodBankRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-
     /**
      * Collections used
      *
@@ -43,6 +34,17 @@ public class BloodBankService {
      *
      * List<Donor> donorList: Stores the donors associated with a specific blood bank.
      */
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BloodBankRepository bloodBankRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+
 
 
     /**
@@ -79,12 +81,16 @@ public class BloodBankService {
 
 
     public BloodBank updateBloodBank(BloodBankRequest bloodBankRequest){
+
         BloodBank bank = bloodBankRepository.findById(bloodBankRequest.getBloodBankId()).orElse(null);
         User user = userRepository.findByUserName(bloodBankRequest.getMailAddress()).orElse(null);
         if(bank != null){
-            user.setUserPassword(passwordEncoder.encode(bloodBankRequest.getPassword()));
-            userRepository.save(user);
-            return bloodBankRepository.save(mapToBloodBank(bank,bloodBankRequest));
+            if(user != null){
+                user.setUserPassword(passwordEncoder.encode(bloodBankRequest.getPassword()));
+                userRepository.save(user);
+                return bloodBankRepository.save(mapToBloodBank(bank,bloodBankRequest));
+            }
+            throw new BloodBankNotFoundException("Blood Bank Not Found");
         }
         throw new BloodBankNotFoundException("Blood Bank Not Found");
     }
