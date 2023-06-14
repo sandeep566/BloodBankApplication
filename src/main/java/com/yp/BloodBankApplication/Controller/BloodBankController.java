@@ -31,11 +31,6 @@ public class BloodBankController {
     @Autowired
     public BloodBankService bloodBankService;
 
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
 
     /**
@@ -122,15 +117,7 @@ public class BloodBankController {
         return new ResponseEntity<>(bloodBankService.viewBloodGroupAndQuantity(id),HttpStatus.OK);
     }
 
-    @PostMapping("/authenticate")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws UsernameNotFoundException {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
-        if(authentication.isAuthenticated()){
-            return jwtService.generateToken(authRequest.getUsername());
-        }else{
-            throw new UsernameNotFoundException("Invalid User Request!");
-        }
-    }
+
 
 
 }
