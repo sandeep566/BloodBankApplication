@@ -17,6 +17,12 @@ public class UserInfoUserDetails implements UserDetails {
     private String password;
     private List<GrantedAuthority> authorities;
 
+
+    /**
+     * Constructs a new instance of {@code UserInfoUserDetails} with the specified user information.
+     *
+     * @param userInfo the user information
+     */
     public UserInfoUserDetails(User userInfo){
         name = userInfo.getUserName();
         password = userInfo.getUserPassword();

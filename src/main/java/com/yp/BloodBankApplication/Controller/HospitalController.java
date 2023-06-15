@@ -5,6 +5,7 @@
 package com.yp.BloodBankApplication.Controller;
 import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import com.yp.BloodBankApplication.Requests.HospitalUpdateRequest;
 import com.yp.BloodBankApplication.Services.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class HospitalController {
      * @return ResponseEntity containing the updated hospital and HTTP status code.
      */
     @PutMapping("/update")
-    public ResponseEntity<Hospital> updateHospital(@RequestBody HospitalRequest hospitalRequest){
+    public ResponseEntity<Hospital> updateHospital(@RequestBody HospitalUpdateRequest hospitalRequest){
         Hospital hospitalResponse = hospitalService.updateHospital(hospitalRequest);
         return new ResponseEntity<>(hospitalResponse, HttpStatus.OK);
     }
@@ -52,7 +53,7 @@ public class HospitalController {
      * @return ResponseEntity containing the retrieved hospital and HTTP status code.
      */
     @GetMapping("/view/{id}")
-    public ResponseEntity<Hospital> getHospital(int id){
+    public ResponseEntity<Hospital> getHospital(@PathVariable int id){
         return new ResponseEntity<>(hospitalService.getHospital(id),HttpStatus.FOUND);
     }
 
@@ -63,7 +64,7 @@ public class HospitalController {
      * @return ResponseEntity containing a success message and HTTP status code.
      */
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> removeHospital(int id){
+    public ResponseEntity<String> removeHospital(@PathVariable int id){
         return new ResponseEntity<>(hospitalService.deleteHospital(id),HttpStatus.OK);
     }
 

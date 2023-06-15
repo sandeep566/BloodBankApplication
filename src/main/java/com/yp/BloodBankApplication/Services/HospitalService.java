@@ -7,6 +7,7 @@ import com.yp.BloodBankApplication.Exception.HospitalNotFoundException;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import com.yp.BloodBankApplication.Requests.HospitalUpdateRequest;
 import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToHospital;
+import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToHospitalUpdate;
 
 
 /**
@@ -66,13 +68,10 @@ public class HospitalService {
      * @return The updated hospital.
      * @throws HospitalNotFoundException if the hospital with the given ID is not found.
      */
-    public Hospital updateHospital(HospitalRequest hospitalRequest){
+    public Hospital updateHospital(HospitalUpdateRequest hospitalRequest){
         Hospital hospital = hospitalRepository.findById(hospitalRequest.getHospitalId()).orElse(null);
-        User user = userRepository.findByUserName(hospitalRequest.getEmail()).orElse(null);
         if(hospital != null){
-            user.setUserPassword(passwordEncoder.encode(hospitalRequest.getPassword()));
-            userRepository.save(user);
-            return hospitalRepository.save(mapToHospital(hospital,hospitalRequest));
+            return hospitalRepository.save(mapToHospitalUpdate(hospital,hospitalRequest));
         }
         throw new HospitalNotFoundException("Hospital Not Found");
     }

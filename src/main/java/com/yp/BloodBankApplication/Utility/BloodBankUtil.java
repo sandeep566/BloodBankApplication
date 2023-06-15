@@ -2,10 +2,7 @@ package com.yp.BloodBankApplication.Utility;
 
 import com.yp.BloodBankApplication.Entity.*;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
-import com.yp.BloodBankApplication.Requests.BloodBankHospitalRequest;
-import com.yp.BloodBankApplication.Requests.BloodBankRequest;
-import com.yp.BloodBankApplication.Requests.DonorRequest;
-import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import com.yp.BloodBankApplication.Requests.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ public class BloodBankUtil {
         donor.setDonorName(donorRequest.getDonorName());
         donor.setAddress(donorRequest.getAddress());
         donor.setAge(donorRequest.getAge());
+        donor.setAadhaarNo(donorRequest.getAadharNo());
         donor.setDonationQuantity(donorRequest.getDonationQuantity());
         return donor;
     }
@@ -59,6 +57,20 @@ public class BloodBankUtil {
         return bloodBank;
     }
 
+
+    public static BloodBank mapToBloodBankUpdate(BloodBank bloodBank,BloodBankUpdateRequest bloodBankUpdateRequest){
+        bloodBank.setBloodBankName(bloodBankUpdateRequest.getBloodBankName());
+        bloodBank.setAddress(bloodBankUpdateRequest.getAddress());
+        bloodBank.setPhoneNumber(bloodBankUpdateRequest.getPhoneNo());
+        return bloodBank;
+    }
+
+    public static Hospital mapToHospitalUpdate(Hospital hospital,HospitalUpdateRequest hospitalUpdateRequest){
+        hospital.setHospitalName(hospitalUpdateRequest.getHospitalName());
+        hospital.setAddress(hospitalUpdateRequest.getAddress());
+        hospital.setPhoneNo(hospitalUpdateRequest.getPhoneNo());
+        return hospital;
+    }
     /**
      *
      * Used to map bloodBankHospitalRequest to bloodRequest

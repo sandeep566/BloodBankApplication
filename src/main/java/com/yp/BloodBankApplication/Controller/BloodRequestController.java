@@ -90,7 +90,7 @@ public class BloodRequestController {
      * @return ResponseEntity containing the blood request and HTTP status code.
      */
     @GetMapping("/view/{requestId}")
-    public ResponseEntity<BloodRequest> viewBloodRequest(int requestId){
+    public ResponseEntity<BloodRequest> viewBloodRequest(@PathVariable int requestId){
         return new ResponseEntity<>(bloodRequestService.viewBloodRequest(requestId),HttpStatus.OK);
     }
 
@@ -101,7 +101,7 @@ public class BloodRequestController {
      * @return ResponseEntity containing a list of blood requests for the hospital and HTTP status code.
      */
     @GetMapping("/viewAllByHospital/{hospitalId}")
-    public ResponseEntity<List<BloodRequest>> viewAllRequestsByHospital(int hospitalId){
+    public ResponseEntity<List<BloodRequest>> viewAllRequestsByHospital(@PathVariable int hospitalId){
         return new ResponseEntity<>(bloodRequestService.viewBloodRequestByHospitalId(hospitalId),HttpStatus.OK);
     }
 }

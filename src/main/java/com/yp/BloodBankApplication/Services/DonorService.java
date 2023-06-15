@@ -55,7 +55,7 @@ public class DonorService {
             BloodBank bloodBank = optionalBloodBank.get();
                 bloodBank.getBloodGroups().put(bloodGroup,bloodBank.getBloodGroups().get(bloodGroup) + donorRequest.getDonationQuantity());
             List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
-                Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(), donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
+                Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(),donorRequest.getAadharNo() ,donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
                 return donorRepository.save(donor);
         }else{
             throw new BloodBankNotFoundException("Blood Bank Not Found");
@@ -86,7 +86,12 @@ public class DonorService {
             List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
             donor.setBloodGroupsMatch(suitableBloodGroups);
             int bloodBankQuantity = bloodGroups.getOrDefault(donor.getBloodGroup(), 0) - donor.getDonationQuantity();
-            bloodGroups.put(donor.getBloodGroup(),bloodBankQuantity);
+            if(bloodBankQuantity > 0){
+                bloodGroups.put(donor.getBloodGroup(),bloodBankQuantity);
+            }
+            else{
+                bloodGroups.put(donor.getBloodGroup(),0);
+            }
             donor.setBloodGroup(bloodGroup);
             bloodGroups.put(bloodGroup,bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
             bloodBank.setBloodGroups(bloodGroups);

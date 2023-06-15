@@ -6,6 +6,7 @@ import com.yp.BloodBankApplication.Entity.Donor;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Requests.AuthRequest;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
+import com.yp.BloodBankApplication.Requests.BloodBankUpdateRequest;
 import com.yp.BloodBankApplication.Services.BloodBankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +56,7 @@ public class BloodBankController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<BloodBank> updateBloodBank(@RequestBody BloodBankRequest bloodBank){
+    public ResponseEntity<BloodBank> updateBloodBank(@RequestBody BloodBankUpdateRequest bloodBank){
         return new ResponseEntity<>(bloodBankService.updateBloodBank(bloodBank),HttpStatus.OK);
     }
 

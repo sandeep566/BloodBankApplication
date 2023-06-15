@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.NumberFormat;
 
+import java.math.BigInteger;
 import java.util.List;
 
 /**
@@ -39,6 +41,13 @@ public class Donor {
 
 
     /**
+     * The aadhar no of donor
+     */
+    @Column(unique=true)
+    private BigInteger aadhaarNo;
+
+
+    /**
      * The address of the donor.
      */
     private String address;
@@ -46,6 +55,7 @@ public class Donor {
     /**
      * The phone number of the donor.
      */
+    @Column(unique=true)
     private long phoneNo;
 
     /**

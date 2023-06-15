@@ -46,6 +46,7 @@ public class Hospital {
     private String address;
 
 
+    @Column(unique=true)
     @Email(message = "Invalid email")
     @NotNull(message = "Email should not be null")
     private String email;
@@ -54,6 +55,7 @@ public class Hospital {
     /**
      * The phone number of the hospital.
      */
+    @Column(unique=true)
     @NotNull(message = "Mobile number cannot be null")
     @Min(value = 1000000000L, message = "Mobile number should be of 10 digits")
     @Max(value = 9999999999L, message = "Mobile number should be of 10 digits")

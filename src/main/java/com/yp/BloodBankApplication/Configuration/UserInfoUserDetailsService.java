@@ -1,3 +1,9 @@
+
+/**
+ * The {@code UserInfoUserDetailsService} class implements the {@code UserDetailsService} interface
+ * and provides the service for loading user details from the repository in the Blood Bank Application.
+ */
+
 package com.yp.BloodBankApplication.Configuration;
 
 

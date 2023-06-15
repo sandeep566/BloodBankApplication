@@ -9,6 +9,7 @@ import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
+import com.yp.BloodBankApplication.Requests.BloodBankUpdateRequest;
 import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,25 +75,18 @@ public class BloodBankService {
     /**
      * Updates an existing blood bank.
      *
-     * @param bloodBankRequest The updated details of the blood bank.
+     * @param bloodBankUpdateRequest The updated details of the blood bank.
      * @return The updated blood bank.
      * @throws BloodBankNotFoundException If the blood bank is not found.
      */
 
 
-    public BloodBank updateBloodBank(BloodBankRequest bloodBankRequest){
-
-        BloodBank bank = bloodBankRepository.findById(bloodBankRequest.getBloodBankId()).orElse(null);
-        User user = userRepository.findByUserName(bloodBankRequest.getMailAddress()).orElse(null);
-        if(bank != null){
-            if(user != null){
-                user.setUserPassword(passwordEncoder.encode(bloodBankRequest.getPassword()));
-                userRepository.save(user);
-                return bloodBankRepository.save(mapToBloodBank(bank,bloodBankRequest));
-            }
-            throw new BloodBankNotFoundException("Blood Bank Not Found");
+    public BloodBank updateBloodBank(BloodBankUpdateRequest bloodBankUpdateRequest){
+        BloodBank bloodBank = bloodBankRepository.findById(bloodBankUpdateRequest.getBloodBankId()).orElse(null);
+        if(bloodBank != null){
+            return bloodBankRepository.save(BloodBankUtil.mapToBloodBankUpdate(bloodBank,bloodBankUpdateRequest));
         }
-        throw new BloodBankNotFoundException("Blood Bank Not Found");
+        throw new BloodBankNotFoundException("Blood bank not found");
     }
 
     /**

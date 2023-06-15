@@ -44,6 +44,7 @@ public class BloodBank {
     /**
      * The phone number of the blood bank.
      */
+    @Column(unique=true)
     private long phoneNumber;
 
 
@@ -59,6 +60,7 @@ public class BloodBank {
     /**
      * The email address of the blood bank.
      */
+    @Column(unique=true)
     private String mailAddress;
 
 

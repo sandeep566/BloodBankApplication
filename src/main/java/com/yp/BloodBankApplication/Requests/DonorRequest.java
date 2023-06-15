@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Data
@@ -27,6 +28,12 @@ public class DonorRequest {
      * The age of the donor.
      */
     private int age;
+
+
+    /**
+     * The aadhar number of donor
+     */
+    private BigInteger aadharNo;
 
     /**
      * The address of the donor.

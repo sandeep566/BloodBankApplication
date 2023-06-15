@@ -1,3 +1,7 @@
+/**
+ * The {@code UserController} class handles the RESTful API endpoints related to user operations in the Blood Bank Application.
+ */
+
 package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Configuration.JwtService;
@@ -24,6 +28,14 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    /**
+     * Authenticates a user and returns a JWT token.
+     *
+     * @param authRequest the authentication request containing the username and password
+     * @return the JWT token
+     * @throws UsernameNotFoundException if the user is not found or the authentication fails
+     */
     @PostMapping("/authenticate")
     public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws UsernameNotFoundException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -34,6 +46,13 @@ public class UserController {
         }
     }
 
+
+    /**
+     * Resets the password for a user.
+     *
+     * @param user the user with the new password
+     * @return a message indicating the password reset status
+     */
     @PutMapping("/reset")
     public String resetPassword(@RequestBody User user){
         return userService.resetPassword(user);

@@ -9,7 +9,9 @@ import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
+import com.yp.BloodBankApplication.Requests.BloodBankUpdateRequest;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
+import com.yp.BloodBankApplication.Requests.HospitalUpdateRequest;
 import com.yp.BloodBankApplication.Services.BloodBankService;
 import com.yp.BloodBankApplication.Services.HospitalService;
 import org.junit.jupiter.api.BeforeEach;
@@ -80,78 +82,54 @@ public class HospitalServiceTest {
     }
 
     @Test
-    void testUpdateBloodBank_WithValidInputs_ShouldReturnUpdatedBloodBank() {
-        // Arrange
-        BloodBankRequest bloodBankRequest = new BloodBankRequest();
-        bloodBankRequest.setBloodBankId(1);
-        bloodBankRequest.setMailAddress("test@example.com");
-        bloodBankRequest.setPassword("password123");
+    public void testUpdateHospital_Success() {
+        // Prepare test data
+        int hospitalId = 1;
+        HospitalUpdateRequest hospitalRequest = new HospitalUpdateRequest();
+        hospitalRequest.setHospitalId(hospitalId);
 
-        BloodBank existingBank = new BloodBank();
-        existingBank.setBloodBankId(1);
+        Hospital existingHospital = new Hospital();
+        existingHospital.setHospitalId(hospitalId);
 
-        User existingUser = new User();
-        existingUser.setUserName("test@example.com");
+        Hospital updatedHospital = new Hospital();
+        updatedHospital.setHospitalId(hospitalId);
+        // Set other fields as required
 
-        when(bloodBankRepository.findById(1)).thenReturn(Optional.of(existingBank));
-        when(userRepository.findByUserName("test@example.com")).thenReturn(Optional.of(existingUser));
-        when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
-        when(userRepository.save(existingUser)).thenReturn(existingUser);
-        when(bloodBankRepository.save(existingBank)).thenReturn(existingBank);
+        // Mock the behavior of the repository
+        when(hospitalRepository.findById(hospitalId)).thenReturn(java.util.Optional.of(existingHospital));
+        when(hospitalRepository.save(any(Hospital.class))).thenReturn(updatedHospital);
 
-        // Act
-        BloodBank updatedBank = bloodBankService.updateBloodBank(bloodBankRequest);
+        // Perform the update
+        Hospital result = hospitalService.updateHospital(hospitalRequest);
 
-        // Assert
-        assertNotNull(updatedBank);
-        assertEquals(existingBank, updatedBank);
-        assertEquals("encodedPassword", existingUser.getUserPassword());
-        verify(bloodBankRepository).findById(1);
-        verify(userRepository).findByUserName("test@example.com");
-        verify(passwordEncoder).encode("password123");
-        verify(userRepository).save(existingUser);
-        verify(bloodBankRepository).save(existingBank);
-    }
+        // Verify the interactions and assertions
+        verify(hospitalRepository, times(1)).findById(hospitalId);
+        verify(hospitalRepository, times(1)).save(any(Hospital.class));
+        assertEquals(hospitalId, result.getHospitalId());
+        // Add more assertions as needed for other fields
 
-    @Test
-    void testUpdateBloodBank_WithInvalidUserName_ShouldThrowException() {
-        // Arrange
-        BloodBankRequest bloodBankRequest = new BloodBankRequest();
-        bloodBankRequest.setBloodBankId(1);
-        bloodBankRequest.setMailAddress("test@example.com");
-        bloodBankRequest.setPassword("password123");
-
-        BloodBank existingBank = new BloodBank();
-        existingBank.setBloodBankId(1);
-
-        when(bloodBankRepository.findById(1)).thenReturn(Optional.of(existingBank));
-        when(userRepository.findByUserName("test@example.com")).thenReturn(Optional.empty());
-
-        // Act and Assert
-        assertThrows(BloodBankNotFoundException.class, () -> bloodBankService.updateBloodBank(bloodBankRequest));
-        verify(bloodBankRepository).findById(1);
-        verify(userRepository).findByUserName("test@example.com");
-        verify(passwordEncoder, never()).encode(anyString());
-        verify(userRepository, never()).save(any(User.class));
-        verify(bloodBankRepository, never()).save(any(BloodBank.class));
+        // Optionally, verify that certain methods were not called
+        verifyNoMoreInteractions(hospitalRepository);
     }
 
     @Test
     public void testUpdateHospital_HospitalNotFound() {
-        // Arrange
-        HospitalRequest hospitalRequest = new HospitalRequest();
-        hospitalRequest.setHospitalId(1);
-        hospitalRequest.setHospitalName("Updated Hospital");
-        hospitalRequest.setAddress("456 Main St");
-        hospitalRequest.setPhoneNo(987654321);
+        // Prepare test data
+        int hospitalId = 1;
+        HospitalUpdateRequest hospitalRequest = new HospitalUpdateRequest();
+        hospitalRequest.setHospitalId(hospitalId);
 
-        when(hospitalRepository.findById(hospitalRequest.getHospitalId())).thenReturn(Optional.empty());
+        // Mock the behavior of the repository
+        when(hospitalRepository.findById(hospitalId)).thenReturn(java.util.Optional.empty());
 
-        // Act and Assert
+        // Perform the update and assert that the HospitalNotFoundException is thrown
         assertThrows(HospitalNotFoundException.class, () -> hospitalService.updateHospital(hospitalRequest));
-        verify(hospitalRepository, times(1)).findById(hospitalRequest.getHospitalId());
-        verify(hospitalRepository, never()).save(any(Hospital.class));
+
+        // Verify the interaction with the repository
+        verify(hospitalRepository, times(1)).findById(hospitalId);
+        verifyNoMoreInteractions(hospitalRepository);
     }
+
 
     @Test
     public void testViewHospital() {
