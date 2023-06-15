@@ -65,16 +65,6 @@ public class BloodBank {
 
 
     /**
-     * The password of the blood bank
-     */
-    @NotNull(message = "Password cannot be null")
-    @Size(min = 8, message = "Password should be at least 8 characters long")
-    @Size(max = 60, message = "Password should be less than 60 characters")
-    private String password;
-
-
-
-    /**
      * The map containing blood group quantities available in the blood bank.
      */
     @ElementCollection

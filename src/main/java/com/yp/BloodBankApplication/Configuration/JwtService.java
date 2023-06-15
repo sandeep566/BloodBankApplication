@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,9 @@ public class JwtService {
     /**
      * The secret key used for signing the JWT.
      */
-    public static final String SECRET = "5DuBlo23odfQb1tqrbNFurio32434jkjdlkfjs65384hfhlkdUJTvR";
+
+    @Value("${jwt.secret}")
+    public String SECRET ;
 
 
     /**

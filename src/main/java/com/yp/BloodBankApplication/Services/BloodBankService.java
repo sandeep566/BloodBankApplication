@@ -62,7 +62,7 @@ public class BloodBankService {
         }
         if( ! isUsernamePresent(bloodBankRequest.getMailAddress())){
             if( ! isPhoneNumberPresent(bloodBankRequest.getPhoneNo())){
-                BloodBank bloodBank = new BloodBank(bloodBankRequest.getBloodBankId(), bloodBankRequest.getBloodBankName(), bloodBankRequest.getAddress(), bloodBankRequest.getPhoneNo(),new ArrayList<>(),bloodBankRequest.getMailAddress(),bloodBankRequest.getPassword(),bloodGroupIntegerMap);
+                BloodBank bloodBank = new BloodBank(bloodBankRequest.getBloodBankId(), bloodBankRequest.getBloodBankName(), bloodBankRequest.getAddress(), bloodBankRequest.getPhoneNo(),new ArrayList<>(),bloodBankRequest.getMailAddress(),bloodGroupIntegerMap);
                 userRepository.save(BloodBankUtil.mapBloodBankToUser(bloodBankRequest,passwordEncoder));
                 return bloodBankRepository.save(bloodBank);
             }
@@ -127,6 +127,7 @@ public class BloodBankService {
         Optional<BloodBank> bloodBank = bloodBankRepository.findById(id);
         if(bloodBank.isPresent()){
             bloodBankRepository.deleteById(id);
+            userRepository.deleteById(id);
             return "Blood Bank deleted";
         }
         throw new BloodBankNotFoundException("Blood Bank Not Found");
@@ -165,7 +166,7 @@ public class BloodBankService {
         throw new BloodBankNotFoundException("Blood Bank Not Found");
     }
 
-    private boolean isUsernamePresent(String username){
+    public boolean isUsernamePresent(String username){
         return userRepository.findByUserName(username).isPresent();
     }
 
