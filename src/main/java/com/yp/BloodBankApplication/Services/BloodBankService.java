@@ -2,7 +2,6 @@ package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Entity.Donor;
-import com.yp.BloodBankApplication.Entity.User;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Exception.BloodBankAlreadyPresentException;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToBloodBank;
+
 
 /**
  * Service class for managing blood banks and their operations.
@@ -68,7 +67,7 @@ public class BloodBankService {
             }
             throw new BloodBankAlreadyPresentException("PhoneNumber already present");
         }
-        throw new BloodBankAlreadyPresentException("Username alredy present");
+        throw new BloodBankAlreadyPresentException("Username already present");
 
     }
 
@@ -117,7 +116,7 @@ public class BloodBankService {
 
 
     /**
-     * Deletes a blood bank by its ID.
+     * Deletes a blood bank along with user by its ID .
      *
      * @param id The ID of the blood bank to delete.
      * @return A message indicating the deletion status.
@@ -136,13 +135,13 @@ public class BloodBankService {
     /**
      * Retrieves all donors associated with a specific blood bank.
      *
-     * @param bloodBankid The ID of the blood bank.
+     * @param bloodBankId The ID of the blood bank.
      * @return A list of all donors associated with the blood bank.
      * @throws BloodBankNotFoundException If the blood bank is not found.
      */
 
-    public List<Donor> getAllDonors(int bloodBankid){
-        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankid);
+    public List<Donor> getAllDonors(int bloodBankId){
+        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankId);
         if(bloodBank.isPresent()){
             return bloodBank.get().getDonorList();
         }
@@ -166,11 +165,62 @@ public class BloodBankService {
         throw new BloodBankNotFoundException("Blood Bank Not Found");
     }
 
+
+    /**
+     * Retrieves the count of donors for a specific blood bank.
+     *
+     * @param bloodBankId the ID of the blood bank to retrieve the count of donors for
+     * @return the count of donors for the specified blood bank
+     * @throws BloodBankNotFoundException if the blood bank with the specified ID is not found
+     */
+    public int getCountOfDonors(int bloodBankId) {
+        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankId);
+        if(bloodBank.isPresent()){
+            return bloodBank.get().getDonorList().size();
+        }
+        throw new BloodBankNotFoundException("Blood Bank Not Found");
+    }
+
+
+    /**
+     * Retrieves the count of blood collected for a specific blood bank.
+     *
+     * @param bloodBankId the ID of the blood bank to retrieve the count of blood collected for
+     * @return the count of blood collected for the specified blood bank
+     * @throws BloodBankNotFoundException if the blood bank with the specified ID is not found
+     */
+
+    public int getCountOfBloodCollected(int bloodBankId){
+        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankId);
+        if(bloodBank.isPresent()){
+            Collection<Integer> values = bloodBank.get().getBloodGroups().values();
+            return values.stream().reduce(0, Integer::sum);
+        }
+        throw new BloodBankNotFoundException("Blood Bank not found");
+    }
+
+
+
+    /**
+     * Checks if a username exists in the user repository.
+     *
+     * @param username the username to check
+     * @return true if the username exists, false otherwise
+     */
     public boolean isUsernamePresent(String username){
         return userRepository.findByUserName(username).isPresent();
     }
 
+
+    /**
+     * Checks if a phone number exists in the blood bank repository.
+     *
+     * @param phoneNumber the phone number to check
+     * @return true if the phone number exists, false otherwise
+     */
     private boolean isPhoneNumberPresent(long phoneNumber){
         return bloodBankRepository.findByPhoneNumber(phoneNumber).isPresent();
     }
+
+
 }

@@ -120,5 +120,33 @@ public class BloodBankController {
 
 
 
+    /**
+     * Retrieves the count of donors for a specific blood bank.
+     *
+     * @param bloodBankId the ID of the blood bank to retrieve the count of donors for
+     * @return a ResponseEntity containing the count of donors and HttpStatus.OK if successful
+     */
+    @GetMapping("/donorCount/{bloodBankId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Integer> countOfDonors(@PathVariable int bloodBankId){
+        return new ResponseEntity<>(bloodBankService.getCountOfDonors(bloodBankId),HttpStatus.OK);
+    }
+
+
+
+    /**
+     * Retrieves the count of blood collected for a specific blood bank.
+     *
+     * @param bloodBankId the ID of the blood bank to retrieve the count of blood collected for
+     * @return a ResponseEntity containing the count of blood collected and HttpStatus.OK if successful
+     */
+    @GetMapping("/bloodCollected/{bloodBankId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<Integer> countOfBlood(@PathVariable int bloodBankId){
+        return new ResponseEntity<>(bloodBankService.getCountOfBloodCollected(bloodBankId),HttpStatus.OK);
+    }
+
+
+
 
 }

@@ -103,6 +103,7 @@ public class HospitalService {
         Optional<Hospital> hospital = hospitalRepository.findById(hospitalId);
         if(hospital.isPresent()){
             hospitalRepository.deleteById(hospitalId);
+            userRepository.deleteById(hospitalId);
             return "Hospital Deleted";
         }
         throw new HospitalNotFoundException("Hospital not found");

@@ -1,15 +1,17 @@
 package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.User;
-import com.yp.BloodBankApplication.Exception.BloodBankAlreadyPresentException;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
+
+
+/**
+ * Service class for managing user-related operations.
+ */
 @Service
 public class UserService {
 
@@ -23,6 +25,13 @@ public class UserService {
     private BloodBankService bloodBankService;
 
 
+    /**
+     * Resets the password for a user.
+     *
+     * @param user the User object containing the username and the new password
+     * @return a message indicating the success of the password reset
+     * @throws UsernameNotFoundException if the user with the specified username does not exist
+     */
 
     public String resetPassword(User user) {
         User userInfo = userRepository.findByUserName(user.getUserName()).orElse(null);
@@ -32,6 +41,6 @@ public class UserService {
             userRepository.save(userInfo);
             return "Password changed successfully";
         }
-        throw new UsernameNotFoundException("User doesnot exists");
+        throw new UsernameNotFoundException("User doesn't exists");
     }
 }
