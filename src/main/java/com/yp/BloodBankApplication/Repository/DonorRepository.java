@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigInteger;
+import java.util.Optional;
+
 /**
  * Repository interface for accessing Donor entities in the database.
  */
@@ -19,4 +22,7 @@ public interface DonorRepository extends JpaRepository<Donor , Integer> {
      */
     @Query("SELECT d.bloodBank.bloodBankId FROM Donor d WHERE d.donorId = :donorId")
     int findBloodBankIdByDonorId(int donorId);
+
+
+    Optional<Donor> findByAadhaarNo(BigInteger aadharNo);
 }

@@ -55,7 +55,6 @@ public class Donor {
     /**
      * The phone number of the donor.
      */
-    @Column(unique=true)
     private long phoneNo;
 
     /**

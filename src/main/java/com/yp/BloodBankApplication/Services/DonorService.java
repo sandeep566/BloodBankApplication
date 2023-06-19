@@ -4,6 +4,7 @@ import com.yp.BloodBankApplication.Entity.BloodBank;
 import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.Donor;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Exception.AadharAlreadyExistException;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
 import com.yp.BloodBankApplication.Exception.DonorNotFoundException;
 import com.yp.BloodBankApplication.Repository.BloodBankRepository;
@@ -13,6 +14,7 @@ import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,11 +54,14 @@ public class DonorService {
     public Donor registerDonor(DonorRequest donorRequest, int bloodBankId, BloodGroup bloodGroup){
         Optional<BloodBank> optionalBloodBank = bloodBankRepository.findById(bloodBankId);
         if(optionalBloodBank.isPresent()){
-            BloodBank bloodBank = optionalBloodBank.get();
+            if(! isAadharPresent(donorRequest.getAadharNo())){
+                BloodBank bloodBank = optionalBloodBank.get();
                 bloodBank.getBloodGroups().put(bloodGroup,bloodBank.getBloodGroups().get(bloodGroup) + donorRequest.getDonationQuantity());
-            List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
+                List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
                 Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(),donorRequest.getAadharNo() ,donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
                 return donorRepository.save(donor);
+            }
+            throw new AadharAlreadyExistException("AadharNo already present");
         }else{
             throw new BloodBankNotFoundException("Blood Bank Not Found");
         }
@@ -181,6 +186,11 @@ public class DonorService {
     public List<Donor> viewDonorsBySuitableBloodGroup(List<BloodGroup> bloodGroups){
         List<Donor> donors = donorRepository.findAll();
         return donors.stream().filter(donor -> new HashSet<>(donor.getBloodGroupsMatch()).containsAll(bloodGroups)).toList();
+    }
+
+    public boolean isAadharPresent(BigInteger aadharNo){
+        Optional<Donor> donor = donorRepository.findByAadhaarNo(aadharNo);
+        return donor.isPresent();
     }
 
 

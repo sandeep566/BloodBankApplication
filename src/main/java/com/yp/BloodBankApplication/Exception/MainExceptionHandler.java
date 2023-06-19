@@ -101,4 +101,14 @@ public class MainExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(AadharAlreadyExistException.class)
+    public ResponseEntity<ErrorResponse> handleException(AadharAlreadyExistException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+
 }
