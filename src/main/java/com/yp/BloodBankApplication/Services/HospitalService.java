@@ -54,9 +54,9 @@ public class HospitalService {
                 userRepository.save(BloodBankUtil.mapHospitalToUser(hospitalRequest,passwordEncoder));
                 return hospitalRepository.save(hospital);
             }
-            throw new HospitalAlreadyExistsException("Account already exists with this email");
+            throw new HospitalAlreadyExistsException("Account already exists with this phone number");
         }
-        throw new HospitalAlreadyExistsException("Account already present with this phone number");
+        throw new HospitalAlreadyExistsException("Account already present with this email");
     }
 
 

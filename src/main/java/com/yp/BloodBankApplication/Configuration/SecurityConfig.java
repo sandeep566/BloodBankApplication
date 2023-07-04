@@ -52,7 +52,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable().authorizeHttpRequests()
-                .requestMatchers("bloodBank/add","hospital/add","user/authenticate","user/reset").permitAll()
+                .requestMatchers("bloodBank/add","hospital/add","user/authenticate","user/reset","**","h2-console/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().sessionManagement()
