@@ -11,6 +11,10 @@ public class JwtResponse {
         this.jwtToken = jwtToken;
     }
 
+    public JwtResponse() {
+
+    }
+
     public User getUser() {
         return user;
     }

@@ -6,7 +6,9 @@ package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Configuration.JwtService;
 import com.yp.BloodBankApplication.Entity.User;
+import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.AuthRequest;
+import com.yp.BloodBankApplication.Response.JwtResponse;
 import com.yp.BloodBankApplication.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,8 +17,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/user")
+@CrossOrigin("http://localhost:4200")
 public class UserController {
 
     @Autowired
@@ -28,6 +33,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private UserRepository userRepository;
+
 
     /**
      * Authenticates a user and returns a JWT token.
@@ -37,10 +45,12 @@ public class UserController {
      * @throws UsernameNotFoundException if the user is not found or the authentication fails
      */
     @PostMapping("/authenticate")
-    public String authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws UsernameNotFoundException {
+    public JwtResponse authenticateAndGetToken(@RequestBody AuthRequest authRequest) throws UsernameNotFoundException {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+        Optional<User> user = userRepository.findByUserName(authRequest.getUsername());
         if(authentication.isAuthenticated()){
-            return jwtService.generateToken(authRequest.getUsername());
+            String token = jwtService.generateToken(authRequest.getUsername());
+            return new JwtResponse(user.get(),token);
         }else{
             throw new UsernameNotFoundException("Invalid User Request!");
         }
