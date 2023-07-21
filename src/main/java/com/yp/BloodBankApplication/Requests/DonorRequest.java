@@ -31,9 +31,9 @@ public class DonorRequest {
 
 
     /**
-     * The aadhar number of donor
+     * The aadhaar number of donor
      */
-    private BigInteger aadharNo;
+    private BigInteger aadhaarNo;
 
     /**
      * The address of the donor.

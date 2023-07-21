@@ -3,11 +3,17 @@
  * It provides endpoints for adding, updating, deleting, and retrieving hospital information.
  */
 package com.yp.BloodBankApplication.Controller;
+import com.yp.BloodBankApplication.Entity.Donor;
 import com.yp.BloodBankApplication.Entity.Hospital;
+import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Requests.HospitalRequest;
 import com.yp.BloodBankApplication.Requests.HospitalUpdateRequest;
 import com.yp.BloodBankApplication.Services.HospitalService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +27,9 @@ public class HospitalController {
 
     @Autowired
     private HospitalService hospitalService;
+
+    @Autowired
+    private HospitalRepository hospitalRepository;
 
     /**
      * Endpoint to add a new hospital.
@@ -77,5 +86,20 @@ public class HospitalController {
     @GetMapping("/viewAll")
     public ResponseEntity<List<Hospital>> getAllHospitals(){
         return new ResponseEntity<>(hospitalService.viewAllHospitals(),HttpStatus.OK);
+    }
+
+    @GetMapping("/paginationAndSortingHospitals")
+    public ResponseEntity<List<Hospital>> getUsers(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "hospitalId") String sortBy) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Hospital> pageResult = hospitalRepository.findAll(pageable);
+
+        List<Hospital> hospitals = pageResult.getContent();
+
+        return ResponseEntity.ok(hospitals);
     }
 }

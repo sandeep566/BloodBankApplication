@@ -12,6 +12,10 @@ import com.yp.BloodBankApplication.Repository.DonorRepository;
 import com.yp.BloodBankApplication.Requests.DonorRequest;
 import com.yp.BloodBankApplication.Utility.BloodBankUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -54,14 +58,14 @@ public class DonorService {
     public Donor registerDonor(DonorRequest donorRequest, int bloodBankId, BloodGroup bloodGroup){
         Optional<BloodBank> optionalBloodBank = bloodBankRepository.findById(bloodBankId);
         if(optionalBloodBank.isPresent()){
-            if(! isAadharPresent(donorRequest.getAadharNo())){
+            if(! isAadharPresent(donorRequest.getAadhaarNo())){
                 BloodBank bloodBank = optionalBloodBank.get();
                 bloodBank.getBloodGroups().put(bloodGroup,bloodBank.getBloodGroups().get(bloodGroup) + donorRequest.getDonationQuantity());
                 List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
-                Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(),donorRequest.getAadharNo() ,donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
+                Donor donor = new Donor(donorRequest.getDonorId(), donorRequest.getDonorName(),donorRequest.getAge(),donorRequest.getAadhaarNo() ,donorRequest.getAddress(), donorRequest.getPhoneNo(), bloodGroup,suitableBloodGroups,bloodBank, donorRequest.getDonationQuantity());
                 return donorRepository.save(donor);
             }
-            throw new AadharAlreadyExistException("AadharNo already present");
+            throw new AadharAlreadyExistException("AadhaarNo already present");
         }else{
             throw new BloodBankNotFoundException("Blood Bank Not Found");
         }
@@ -79,43 +83,53 @@ public class DonorService {
      */
 
 
-    public Donor updateDonor(DonorRequest donorRequest,BloodGroup bloodGroup){
-        Optional<Donor> optionalDonor = donorRepository.findById(donorRequest.getDonorId());
+    public String updateDonor(DonorRequest donorRequest,BloodGroup bloodGroup) {
 
-        if(optionalDonor.isPresent()){
+        Optional<Donor> optionalDonor = donorRepository.findById(donorRequest.getDonorId());
+        if (optionalDonor.isPresent()) {
+            Donor donor1 = optionalDonor.get();
             int bloodBankId = donorRepository.findBloodBankIdByDonorId(donorRequest.getDonorId());
             BloodBank bloodBank = bloodBankRepository.findById(bloodBankId).orElse(null);
-            assert bloodBank != null;
-            Map<BloodGroup,Integer> bloodGroups = bloodBank.getBloodGroups();
-            Donor donor = mapToDonor( optionalDonor.get() , donorRequest);
-            List<BloodGroup> suitableBloodGroups = BloodBankUtil.getSuitableBloodGroups(bloodGroup);
-            donor.setBloodGroupsMatch(suitableBloodGroups);
-            int bloodBankQuantity = bloodGroups.getOrDefault(donor.getBloodGroup(), 0) - donor.getDonationQuantity();
-            if(bloodBankQuantity > 0){
-                bloodGroups.put(donor.getBloodGroup(),bloodBankQuantity);
+
+            if (bloodBank != null) {
+                Map<BloodGroup, Integer> bloodGroups = bloodBank.getBloodGroups();
+                BloodGroup group = donor1.getBloodGroup();
+                if (group != bloodGroup) {
+                    int groupQuantity = (bloodGroups.get(group) - donor1.getDonationQuantity());
+                    bloodGroups.put(group, groupQuantity);
+                    int newQuantity = (bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
+                    bloodGroups.put(bloodGroup, newQuantity);
+                    Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
+                    donor.setBloodGroup(bloodGroup);
+                    bloodBank.setBloodGroups(bloodGroups);
+                    bloodBankRepository.save(bloodBank);
+                    donorRepository.save(donor);
+                } else {
+                    int totalQuantity = bloodGroups.get(group);
+                    int newQuantity = totalQuantity - donor1.getDonationQuantity();
+                    bloodGroups.put(bloodGroup, newQuantity + donorRequest.getDonationQuantity());
+                    Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
+                    donor.setBloodGroup(bloodGroup);
+                    bloodBank.setBloodGroups(bloodGroups);
+                    bloodBankRepository.save(bloodBank);
+                    donorRepository.save(donor);
+                }
             }
-            else{
-                bloodGroups.put(donor.getBloodGroup(),0);
-            }
-            donor.setBloodGroup(bloodGroup);
-            bloodGroups.put(bloodGroup,bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
-            bloodBank.setBloodGroups(bloodGroups);
-            bloodBankRepository.save(bloodBank);
-            return donorRepository.save(donor);
-        }
-        else{
+        } else {
             throw new DonorNotFoundException("Donor not found");
         }
+        return "Donor Updated";
     }
 
 
-    /**
-     * Retrieves a donor by their ID.
-     *
-     * @param donorId   The ID of the donor to retrieve.
-     * @return The donor with the specified ID.
-     * @throws DonorNotFoundException    if the donor with the given ID is not found.
-     */
+
+        /**
+         * Retrieves a donor by their ID.
+         *
+         * @param donorId   The ID of the donor to retrieve.
+         * @return The donor with the specified ID.
+         * @throws DonorNotFoundException    if the donor with the given ID is not found.
+         */
     public Donor viewDonorById(int donorId){
         Optional<Donor> donor = donorRepository.findById(donorId);
         if(donor.isPresent()){
@@ -187,6 +201,8 @@ public class DonorService {
         List<Donor> donors = donorRepository.findAll();
         return donors.stream().filter(donor -> new HashSet<>(donor.getBloodGroupsMatch()).containsAll(bloodGroups)).toList();
     }
+
+
 
     public boolean isAadharPresent(BigInteger aadharNo){
         Optional<Donor> donor = donorRepository.findByAadhaarNo(aadharNo);

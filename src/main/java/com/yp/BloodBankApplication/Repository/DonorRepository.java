@@ -1,6 +1,8 @@
 package com.yp.BloodBankApplication.Repository;
 
 import com.yp.BloodBankApplication.Entity.Donor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,4 +27,7 @@ public interface DonorRepository extends JpaRepository<Donor , Integer> {
 
 
     Optional<Donor> findByAadhaarNo(BigInteger aadharNo);
+
+    @Query("SELECT donor from Donor donor WHERE donor.bloodBank.bloodBankId = :bloodBankId")
+    Page<Donor> findAllByBloodBankId(Pageable pageable,int bloodBankId);
 }

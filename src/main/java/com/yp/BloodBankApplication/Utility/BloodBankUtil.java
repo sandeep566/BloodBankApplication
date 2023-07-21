@@ -48,8 +48,9 @@ public class BloodBankUtil {
         donor.setDonorName(donorRequest.getDonorName());
         donor.setAddress(donorRequest.getAddress());
         donor.setAge(donorRequest.getAge());
-        donor.setAadhaarNo(donorRequest.getAadharNo());
+        donor.setAadhaarNo(donorRequest.getAadhaarNo());
         donor.setDonationQuantity(donorRequest.getDonationQuantity());
+        donor.setPhoneNo(donorRequest.getPhoneNo());
         return donor;
     }
 

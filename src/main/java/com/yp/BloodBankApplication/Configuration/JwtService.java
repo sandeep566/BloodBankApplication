@@ -1,11 +1,14 @@
 package com.yp.BloodBankApplication.Configuration;
 
 
+import com.yp.BloodBankApplication.Repository.BloodBankRepository;
+import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -25,6 +28,12 @@ import java.util.function.Function;
 @Component
 public class JwtService {
 
+
+    @Autowired
+    private BloodBankRepository bloodBankRepository;
+
+    @Autowired
+    private HospitalRepository hospitalRepository;
     /**
      * The secret key used for signing the JWT.
      */
@@ -107,8 +116,14 @@ public class JwtService {
      * @param username the username
      * @return the generated JWT token
      */
-    public String generateToken(String username){
+    public String generateToken(String username,String role){
         Map<String, Object> claims = new HashMap<>();
+        claims.put("role",role);
+        if(role.equals("ROLE_ADMIN") && bloodBankRepository.findByMailAddress(username).isPresent()){
+            claims.put("id",bloodBankRepository.findByMailAddress(username).get().getBloodBankId());
+        } else if (role.equals("ROLE_USER") && hospitalRepository.findByEmail(username).isPresent()) {
+            claims.put("id",hospitalRepository.findByEmail(username).get().getHospitalId());
+        }
         return createToken(claims, username);
     }
     private String createToken(Map<String, Object> claims, String username) {

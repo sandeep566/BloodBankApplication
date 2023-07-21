@@ -151,14 +151,14 @@ public class BloodBankService {
     /**
      * Retrieves the blood groups and their quantities available in a blood bank.
      *
-     * @param bloodBankId The ID of the blood bank.
+     * @param id The id of the blood bank.
      * @return A map containing the blood groups and their corresponding quantities.
      * @throws BloodBankNotFoundException If the blood bank is not found.
      */
 
 
-    public Map<BloodGroup,Integer> viewBloodGroupAndQuantity(int bloodBankId){
-        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankId);
+    public Map<BloodGroup,Integer> viewBloodGroupAndQuantity(int id){
+        Optional<BloodBank> bloodBank = bloodBankRepository.findById(id);
         if(bloodBank.isPresent()){
             return bloodBank.get().getBloodGroups();
         }
@@ -169,12 +169,12 @@ public class BloodBankService {
     /**
      * Retrieves the count of donors for a specific blood bank.
      *
-     * @param bloodBankId the ID of the blood bank to retrieve the count of donors for
+     * @param id the ID of the blood bank to retrieve the count of donors for
      * @return the count of donors for the specified blood bank
      * @throws BloodBankNotFoundException if the blood bank with the specified ID is not found
      */
-    public int getCountOfDonors(int bloodBankId) {
-        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankId);
+    public int getCountOfDonors(int id) {
+        Optional<BloodBank> bloodBank = bloodBankRepository.findById(id);
         if(bloodBank.isPresent()){
             return bloodBank.get().getDonorList().size();
         }
@@ -198,6 +198,7 @@ public class BloodBankService {
         }
         throw new BloodBankNotFoundException("Blood Bank not found");
     }
+
 
 
 

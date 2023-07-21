@@ -5,7 +5,11 @@
 package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Configuration.JwtService;
+import com.yp.BloodBankApplication.Entity.BloodBank;
+import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Entity.User;
+import com.yp.BloodBankApplication.Repository.BloodBankRepository;
+import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.AuthRequest;
 import com.yp.BloodBankApplication.Response.JwtResponse;
@@ -17,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 @RestController
@@ -37,6 +42,8 @@ public class UserController {
     private UserRepository userRepository;
 
 
+
+
     /**
      * Authenticates a user and returns a JWT token.
      *
@@ -49,7 +56,7 @@ public class UserController {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
         Optional<User> user = userRepository.findByUserName(authRequest.getUsername());
         if(authentication.isAuthenticated()){
-            String token = jwtService.generateToken(authRequest.getUsername());
+            String token = jwtService.generateToken(authRequest.getUsername(),user.get().getRole());
             return new JwtResponse(user.get(),token);
         }else{
             throw new UsernameNotFoundException("Invalid User Request!");

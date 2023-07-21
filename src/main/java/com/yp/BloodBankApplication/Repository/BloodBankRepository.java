@@ -18,5 +18,5 @@ import java.util.Optional;
 public interface BloodBankRepository extends JpaRepository<BloodBank , Integer> {
     Optional<Object> findByPhoneNumber(long phoneNumber);
 
-
+    Optional<BloodBank> findByMailAddress(String mailAddress);
 }

@@ -1,19 +1,28 @@
 package com.yp.BloodBankApplication.Response;
 
+import com.yp.BloodBankApplication.Entity.BloodBank;
+import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Entity.User;
 
 public class JwtResponse {
     private User user;
+
+    private BloodBank bloodBank;
+
+    private  Hospital hospital;
     private String jwtToken;
 
     public JwtResponse(User user, String jwtToken) {
         this.user = user;
         this.jwtToken = jwtToken;
     }
+    
+    
 
     public JwtResponse() {
 
     }
+
 
     public User getUser() {
         return user;

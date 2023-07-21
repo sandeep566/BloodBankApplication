@@ -7,22 +7,32 @@ package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Entity.Donor;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Repository.DonorRepository;
 import com.yp.BloodBankApplication.Requests.DonorRequest;
 import com.yp.BloodBankApplication.Services.DonorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/donor")
+@CrossOrigin("http://localhost:4200")
 public class DonorController {
 
     @Autowired
     private DonorService donorService;
+
+    @Autowired
+    private DonorRepository donorRepository;
 
 
     /**
@@ -49,7 +59,7 @@ public class DonorController {
 
     @PutMapping("/update")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Donor> updateDonor(@RequestBody DonorRequest donorRequest,@RequestParam("bloodGroup") BloodGroup bloodGroup){
+    public ResponseEntity<String> updateDonor(@RequestBody DonorRequest donorRequest,@RequestParam("bloodGroup") BloodGroup bloodGroup){
         return new ResponseEntity<>(donorService.updateDonor(donorRequest,bloodGroup),HttpStatus.OK);
     }
 
@@ -57,12 +67,12 @@ public class DonorController {
     /**
      * Endpoint to retrieve a specific blood donor by ID.
      *
-     * @param donorId The ID of the donor.
+     * @param id The ID of the donor.
      * @return ResponseEntity containing the donor and HTTP status code.
      */
-    @GetMapping("/view/{donorId}")
-    public ResponseEntity<Donor> viewDonorById(int donorId){
-        return new ResponseEntity<>(donorService.viewDonorById(donorId),HttpStatus.FOUND);
+    @GetMapping("/view/{id}")
+    public ResponseEntity<Donor> viewDonorById(@PathVariable int id){
+        return new ResponseEntity<>(donorService.viewDonorById(id),HttpStatus.OK);
     }
 
 
@@ -121,5 +131,22 @@ public class DonorController {
     @GetMapping("/getDonorsForSuitableBloodGroups")
     public ResponseEntity<List<Donor>> getDonorsBySuitableBloodGroup(@RequestParam List<BloodGroup> bloodGroups){
         return new ResponseEntity<>(donorService.viewDonorsBySuitableBloodGroup(bloodGroups),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/paginationAndSortingDonors/{id}")
+    public ResponseEntity<Page<Donor>> getUsers(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "donorId") String sortBy,
+            @PathVariable int id) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<Donor> pageResult = donorRepository.findAllByBloodBankId(pageable,id);
+
+//        List<Donor> users = pageResult.getContent();
+
+        return ResponseEntity.ok(pageResult);
     }
 }

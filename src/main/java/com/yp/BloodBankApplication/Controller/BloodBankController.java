@@ -25,6 +25,7 @@ import java.util.Map;
 /**
  * Controller class for handling blood bank-related API endpoints.
  */
+@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping("/bloodBank")
 public class BloodBankController {
@@ -110,7 +111,7 @@ public class BloodBankController {
     /**
      * Retrieves Map of blood group and their quantity associated with a specific blood bank.
      *
-     * @param id The ID of the blood bank.
+     * @param id The id of the blood bank.
      * @return A list of all donors associated with the blood bank
      */
     @GetMapping("/viewBloodGroupQuantity/{id}")
@@ -123,13 +124,13 @@ public class BloodBankController {
     /**
      * Retrieves the count of donors for a specific blood bank.
      *
-     * @param bloodBankId the ID of the blood bank to retrieve the count of donors for
+     * @param id the ID of the blood bank to retrieve the count of donors for
      * @return a ResponseEntity containing the count of donors and HttpStatus.OK if successful
      */
-    @GetMapping("/donorCount/{bloodBankId}")
+    @GetMapping("/donorCount/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<Integer> countOfDonors(@PathVariable int bloodBankId){
-        return new ResponseEntity<>(bloodBankService.getCountOfDonors(bloodBankId),HttpStatus.OK);
+    public ResponseEntity<Integer> countOfDonors(@PathVariable int id){
+        return new ResponseEntity<>(bloodBankService.getCountOfDonors(id),HttpStatus.OK);
     }
 
 
