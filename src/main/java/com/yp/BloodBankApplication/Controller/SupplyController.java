@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/supply")
 public class SupplyController {
@@ -48,5 +50,11 @@ public class SupplyController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteSupplyReport(@PathVariable int supplyId){
         return new ResponseEntity<>(supplyService.deleteSupplyReport(supplyId),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/supplyReportById/{id}")
+    public ResponseEntity<List<SupplyReport>> getAllSupplyByBloodBankId(@PathVariable int id){
+        return new ResponseEntity<>(supplyService.getAllSupplyReportsByBloodBank(id),HttpStatus.OK);
     }
 }

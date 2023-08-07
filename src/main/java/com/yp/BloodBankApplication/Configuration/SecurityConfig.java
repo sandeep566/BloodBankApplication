@@ -74,7 +74,7 @@ public class SecurityConfig {
                         }
                 )
                 .and().csrf().disable().authorizeHttpRequests()
-                .requestMatchers("bloodBank/add","hospital/add","user/authenticate","user/reset").permitAll()
+                .requestMatchers("bloodBank/add","hospital/add","user/authenticate","user/reset","user/checkUsername/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and().sessionManagement()

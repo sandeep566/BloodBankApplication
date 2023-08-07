@@ -2,13 +2,19 @@ package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Configuration.JwtService;
 import com.yp.BloodBankApplication.Entity.BloodBank;
+import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.Donor;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
+import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Requests.AuthRequest;
 import com.yp.BloodBankApplication.Requests.BloodBankRequest;
 import com.yp.BloodBankApplication.Requests.BloodBankUpdateRequest;
 import com.yp.BloodBankApplication.Services.BloodBankService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,7 +37,10 @@ import java.util.Map;
 public class BloodBankController {
 
     @Autowired
-    public BloodBankService bloodBankService;
+    private BloodBankService bloodBankService;
+
+    @Autowired
+    private BloodBankRepository bloodbankRepository;
 
 
 
@@ -70,7 +79,7 @@ public class BloodBankController {
 
     @GetMapping("/view/{id}")
     public ResponseEntity<BloodBank> getBloodBank(@PathVariable int id){
-        return new ResponseEntity<>(bloodBankService.viewBloodBank(id),HttpStatus.FOUND);
+        return new ResponseEntity<>(bloodBankService.viewBloodBank(id),HttpStatus.OK);
     }
 
 
@@ -145,6 +154,22 @@ public class BloodBankController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Integer> countOfBlood(@PathVariable int bloodBankId){
         return new ResponseEntity<>(bloodBankService.getCountOfBloodCollected(bloodBankId),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/paginationAndSortingBloodBanks")
+    public ResponseEntity<Page<BloodBank>> getUsers(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "5") int pageSize,
+            @RequestParam(defaultValue = "bloodBankId") String sortBy) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<BloodBank> pageResult = bloodbankRepository.findAll(pageable);
+
+//        List<BloodRequest> hospitals = pageResult.getContent();
+
+        return ResponseEntity.ok(pageResult);
     }
 
 

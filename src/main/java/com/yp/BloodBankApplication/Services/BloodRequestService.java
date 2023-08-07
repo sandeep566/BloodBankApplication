@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.yp.BloodBankApplication.Utility.BloodBankUtil.mapToBloodRequest;
 
@@ -75,7 +76,7 @@ public class BloodRequestService {
             mapToBloodRequest(bloodRequest,bloodBankHospitalRequest);
             bloodRequest.setBloodGroup(bloodGroup);
             bloodRequest.setPriority(priority);
-            bloodRequest.setSupplied(false);
+            bloodRequest.setSupplied(isSupplied);
             return bloodRequestRepository.save(bloodRequest);
         }
         throw new BloodRequestNotFoundException("Blood Request Not Found");
@@ -144,4 +145,15 @@ public class BloodRequestService {
         }
         throw new HospitalNotFoundException("Hospital not Found");
     }
+
+    public List<BloodRequest> getAllAcceptedRequests(int hospitalId){
+        Hospital hospital = hospitalRepository.findById(hospitalId).orElse(null);
+        if(hospital != null){
+            return hospital.getBloodRequests().stream().filter(bloodRequest -> bloodRequest.isSupplied()).collect(Collectors.toList());
+        }
+        throw new HospitalNotFoundException("Hospital not found");
+    }
+
+
+
 }

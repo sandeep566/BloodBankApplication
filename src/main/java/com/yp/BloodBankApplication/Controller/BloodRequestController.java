@@ -5,11 +5,17 @@
 package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Entity.BloodRequest;
+import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Enums.Priority;
+import com.yp.BloodBankApplication.Repository.BloodRequestRepository;
 import com.yp.BloodBankApplication.Requests.BloodBankHospitalRequest;
 import com.yp.BloodBankApplication.Services.BloodRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +28,9 @@ public class BloodRequestController {
 
     @Autowired
     private BloodRequestService bloodRequestService;
+
+    @Autowired
+    private BloodRequestRepository bloodRequestRepository;
 
     /**
      * Endpoint to add a new blood request for a hospital.
@@ -103,5 +112,26 @@ public class BloodRequestController {
     @GetMapping("/viewAllByHospital/{hospitalId}")
     public ResponseEntity<List<BloodRequest>> viewAllRequestsByHospital(@PathVariable int hospitalId){
         return new ResponseEntity<>(bloodRequestService.viewBloodRequestByHospitalId(hospitalId),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/paginationAndSortingBloodRequests")
+    public ResponseEntity<Page<BloodRequest>> getUsers(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "5") int pageSize,
+            @RequestParam(defaultValue = "bloodRequestId") String sortBy) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<BloodRequest> pageResult = bloodRequestRepository.findAll(pageable);
+
+//        List<BloodRequest> hospitals = pageResult.getContent();
+
+        return ResponseEntity.ok(pageResult);
+    }
+
+    @GetMapping("/acceptedRequests/{hospitalId}")
+    public ResponseEntity<List<BloodRequest>> getAcceptedBloodRequests(@PathVariable int hospitalId){
+        return new ResponseEntity<>(bloodRequestService.getAllAcceptedRequests(hospitalId),HttpStatus.OK);
     }
 }

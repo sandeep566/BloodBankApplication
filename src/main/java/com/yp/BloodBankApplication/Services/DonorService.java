@@ -95,12 +95,14 @@ public class DonorService {
                 Map<BloodGroup, Integer> bloodGroups = bloodBank.getBloodGroups();
                 BloodGroup group = donor1.getBloodGroup();
                 if (group != bloodGroup) {
+
                     int groupQuantity = (bloodGroups.get(group) - donor1.getDonationQuantity());
                     bloodGroups.put(group, groupQuantity);
                     int newQuantity = (bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
                     bloodGroups.put(bloodGroup, newQuantity);
                     Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
                     donor.setBloodGroup(bloodGroup);
+                    donor.setBloodGroupsMatch(BloodBankUtil.getSuitableBloodGroups(bloodGroup));
                     bloodBank.setBloodGroups(bloodGroups);
                     bloodBankRepository.save(bloodBank);
                     donorRepository.save(donor);
@@ -199,7 +201,7 @@ public class DonorService {
      */
     public List<Donor> viewDonorsBySuitableBloodGroup(List<BloodGroup> bloodGroups){
         List<Donor> donors = donorRepository.findAll();
-        return donors.stream().filter(donor -> new HashSet<>(donor.getBloodGroupsMatch()).containsAll(bloodGroups)).toList();
+        return donors.stream().filter(donor -> donor.getBloodGroupsMatch().containsAll(bloodGroups)).collect(Collectors.toList());
     }
 
 

@@ -64,7 +64,7 @@ public class HospitalController {
      */
     @GetMapping("/view/{id}")
     public ResponseEntity<Hospital> getHospital(@PathVariable int id){
-        return new ResponseEntity<>(hospitalService.getHospital(id),HttpStatus.FOUND);
+        return new ResponseEntity<>(hospitalService.getHospital(id),HttpStatus.OK);
     }
 
     /**

@@ -109,6 +109,13 @@ public class MainExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(OtpMissMatchException.class)
+    public ResponseEntity<ErrorResponse> handleException(OtpMissMatchException ex){
+
+        ErrorResponse errorResponse = new ErrorResponse(ex.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
 
 
 }

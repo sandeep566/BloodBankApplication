@@ -146,7 +146,6 @@ public class DonorController {
         Page<Donor> pageResult = donorRepository.findAllByBloodBankId(pageable,id);
 
 //        List<Donor> users = pageResult.getContent();
-
         return ResponseEntity.ok(pageResult);
     }
 }

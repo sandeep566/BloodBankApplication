@@ -26,7 +26,7 @@ public class BloodRequest {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int BloodRequestId;
+    private int bloodRequestId;
 
 
     /**

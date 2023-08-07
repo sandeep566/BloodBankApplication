@@ -12,9 +12,13 @@ import com.yp.BloodBankApplication.Repository.BloodBankRepository;
 import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.AuthRequest;
+import com.yp.BloodBankApplication.Requests.UserRequest;
 import com.yp.BloodBankApplication.Response.JwtResponse;
+import com.yp.BloodBankApplication.Response.OtpResponse;
 import com.yp.BloodBankApplication.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -71,7 +75,13 @@ public class UserController {
      * @return a message indicating the password reset status
      */
     @PutMapping("/reset")
-    public String resetPassword(@RequestBody User user){
-        return userService.resetPassword(user);
+    public ResponseEntity<String> resetPassword(@RequestBody UserRequest user){
+        return new ResponseEntity<>(userService.resetPassword(user),HttpStatus.OK);
+    }
+
+
+    @GetMapping("/checkUsername/{userName}")
+    public ResponseEntity<OtpResponse> getOtpResponse(@PathVariable String userName){
+        return new ResponseEntity<>(userService.checkuserName(userName), HttpStatus.OK);
     }
 }
