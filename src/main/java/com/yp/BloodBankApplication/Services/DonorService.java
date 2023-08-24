@@ -94,28 +94,31 @@ public class DonorService {
             if (bloodBank != null) {
                 Map<BloodGroup, Integer> bloodGroups = bloodBank.getBloodGroups();
                 BloodGroup group = donor1.getBloodGroup();
-                if (group != bloodGroup) {
-
-                    int groupQuantity = (bloodGroups.get(group) - donor1.getDonationQuantity());
-                    bloodGroups.put(group, groupQuantity);
-                    int newQuantity = (bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
-                    bloodGroups.put(bloodGroup, newQuantity);
-                    Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
-                    donor.setBloodGroup(bloodGroup);
-                    donor.setBloodGroupsMatch(BloodBankUtil.getSuitableBloodGroups(bloodGroup));
-                    bloodBank.setBloodGroups(bloodGroups);
-                    bloodBankRepository.save(bloodBank);
-                    donorRepository.save(donor);
-                } else {
+//                if (group != bloodGroup) {
+//                    int groupQuantity = (bloodGroups.get(group) - donor1.getDonationQuantity());
+//                    bloodGroups.put(group, groupQuantity);
+//                    int newQuantity = (bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
+//                    bloodGroups.put(bloodGroup, newQuantity);
+//                    Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
+//                    donor.setBloodGroup(bloodGroup);
+//                    donor.setBloodGroupsMatch(BloodBankUtil.getSuitableBloodGroups(bloodGroup));
+//                    bloodBank.setBloodGroups(bloodGroups);
+//                    bloodBankRepository.save(bloodBank);
+//                    donorRepository.save(donor);
+//                } else {
                     int totalQuantity = bloodGroups.get(group);
                     int newQuantity = totalQuantity - donor1.getDonationQuantity();
-                    bloodGroups.put(bloodGroup, newQuantity + donorRequest.getDonationQuantity());
+                    if(newQuantity > 0){
+                        bloodGroups.put(bloodGroup, newQuantity + donorRequest.getDonationQuantity());
+                    }else{
+                        bloodGroups.put(bloodGroup, 0);
+                    }
                     Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
                     donor.setBloodGroup(bloodGroup);
                     bloodBank.setBloodGroups(bloodGroups);
                     bloodBankRepository.save(bloodBank);
                     donorRepository.save(donor);
-                }
+//                }
             }
         } else {
             throw new DonorNotFoundException("Donor not found");
@@ -148,6 +151,7 @@ public class DonorService {
      */
 
     public List<Donor> getAllDonors(){
+
         return donorRepository.findAll();
     }
 

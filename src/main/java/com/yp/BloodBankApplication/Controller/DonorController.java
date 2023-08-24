@@ -137,7 +137,7 @@ public class DonorController {
     @GetMapping("/paginationAndSortingDonors/{id}")
     public ResponseEntity<Page<Donor>> getUsers(
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(defaultValue = "5") int pageSize,
             @RequestParam(defaultValue = "donorId") String sortBy,
             @PathVariable int id) {
 
