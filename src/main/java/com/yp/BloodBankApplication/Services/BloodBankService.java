@@ -200,6 +200,18 @@ public class BloodBankService {
     }
 
 
+    public BloodBank updateBloodGroupsInBloodBank(int bloodBankId,BloodGroup bloodGroup,int quantity){
+        Optional<BloodBank> bloodBank = bloodBankRepository.findById(bloodBankId);
+        if(bloodBank.isPresent()){
+            BloodBank bloodBank1 = bloodBank.get();
+            Map<BloodGroup,Integer> bloodGroupsWithQuantity = bloodBank1.getBloodGroups();
+            bloodGroupsWithQuantity.put(bloodGroup,quantity);
+            bloodBank1.setBloodGroups(bloodGroupsWithQuantity);
+            return bloodBankRepository.save(bloodBank1);
+        }else{
+            throw new BloodBankNotFoundException("Blood bank not found");
+        }
+    }
 
 
     /**

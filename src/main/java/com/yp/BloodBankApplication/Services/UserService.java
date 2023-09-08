@@ -66,8 +66,9 @@ public class UserService {
             }
 //            userInfo.setUserName(user.getUserName());
             throw new OtpMissMatchException("Otp not match");
+        }else {
+            throw new UsernameNotFoundException("User doesn't exists");
         }
-        throw new UsernameNotFoundException("User doesn't exists");
     }
 
     private static String generateOTP(int length) {

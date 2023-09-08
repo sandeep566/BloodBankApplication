@@ -121,7 +121,7 @@ public class HospitalService {
 
 
     private boolean isUsernamePresent(String username){
-        return userRepository.findByUserName(username).isPresent();
+        return userRepository.findByUserName(username.toLowerCase()).isPresent();
     }
 
     private boolean isPhoneNumberPresent(long phoneNumber){

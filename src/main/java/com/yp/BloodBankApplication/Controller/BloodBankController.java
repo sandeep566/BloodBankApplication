@@ -173,6 +173,11 @@ public class BloodBankController {
     }
 
 
+    @PutMapping("/updateBloodQuantities/{bloodBankId}")
+    public ResponseEntity<BloodBank> updateBloodGroupQuantities(@PathVariable int bloodBankId,@RequestParam BloodGroup bloodGroup,@RequestParam int quantity){
+        return new ResponseEntity<>(bloodBankService.updateBloodGroupsInBloodBank(bloodBankId,bloodGroup,quantity),HttpStatus.OK);
+    }
+
 
 
 }

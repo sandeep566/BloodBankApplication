@@ -5,11 +5,7 @@
 package com.yp.BloodBankApplication.Controller;
 
 import com.yp.BloodBankApplication.Configuration.JwtService;
-import com.yp.BloodBankApplication.Entity.BloodBank;
-import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Entity.User;
-import com.yp.BloodBankApplication.Repository.BloodBankRepository;
-import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Repository.UserRepository;
 import com.yp.BloodBankApplication.Requests.AuthRequest;
 import com.yp.BloodBankApplication.Requests.UserRequest;

@@ -88,37 +88,36 @@ public class DonorService {
         Optional<Donor> optionalDonor = donorRepository.findById(donorRequest.getDonorId());
         if (optionalDonor.isPresent()) {
             Donor donor1 = optionalDonor.get();
-            int bloodBankId = donorRepository.findBloodBankIdByDonorId(donorRequest.getDonorId());
-            BloodBank bloodBank = bloodBankRepository.findById(bloodBankId).orElse(null);
-
-            if (bloodBank != null) {
-                Map<BloodGroup, Integer> bloodGroups = bloodBank.getBloodGroups();
-                BloodGroup group = donor1.getBloodGroup();
-//                if (group != bloodGroup) {
-//                    int groupQuantity = (bloodGroups.get(group) - donor1.getDonationQuantity());
-//                    bloodGroups.put(group, groupQuantity);
-//                    int newQuantity = (bloodGroups.get(bloodGroup) + donorRequest.getDonationQuantity());
-//                    bloodGroups.put(bloodGroup, newQuantity);
-//                    Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
-//                    donor.setBloodGroup(bloodGroup);
-//                    donor.setBloodGroupsMatch(BloodBankUtil.getSuitableBloodGroups(bloodGroup));
-//                    bloodBank.setBloodGroups(bloodGroups);
-//                    bloodBankRepository.save(bloodBank);
-//                    donorRepository.save(donor);
-//                } else {
+            if((! isAadharPresent(donorRequest.getAadhaarNo())) || (donor1.getAadhaarNo().equals(donorRequest.getAadhaarNo()))){
+                int bloodBankId = donorRepository.findBloodBankIdByDonorId(donorRequest.getDonorId());
+                BloodBank bloodBank = bloodBankRepository.findById(bloodBankId).orElse(null);
+                if (bloodBank != null) {
+                    Map<BloodGroup, Integer> bloodGroups = bloodBank.getBloodGroups();
+                    BloodGroup group = donor1.getBloodGroup();
                     int totalQuantity = bloodGroups.get(group);
-                    int newQuantity = totalQuantity - donor1.getDonationQuantity();
-                    if(newQuantity > 0){
-                        bloodGroups.put(bloodGroup, newQuantity + donorRequest.getDonationQuantity());
-                    }else{
-                        bloodGroups.put(bloodGroup, 0);
+                    int newQuantity = donor1.getDonationQuantity() - donorRequest.getDonationQuantity();
+                    if(totalQuantity > 0 && totalQuantity > newQuantity){
+                        totalQuantity -= newQuantity;
+                        bloodGroups.put(bloodGroup,totalQuantity);
                     }
+                    else{
+                        totalQuantity = 0;
+                        bloodGroups.put(bloodGroup,totalQuantity);
+                    }
+//                    int newQuantity = totalQuantity - donor1.getDonationQuantity();
+//                    if(newQuantity > 0){
+//                        bloodGroups.put(bloodGroup, newQuantity + donorRequest.getDonationQuantity());
+//                    }else{
+//                        bloodGroups.put(bloodGroup, 0);
+//                    }
                     Donor donor = mapToDonor(optionalDonor.get(), donorRequest);
                     donor.setBloodGroup(bloodGroup);
                     bloodBank.setBloodGroups(bloodGroups);
                     bloodBankRepository.save(bloodBank);
                     donorRepository.save(donor);
-//                }
+                }
+            }else{
+                throw new AadharAlreadyExistException("AadhaarNo already present");
             }
         } else {
             throw new DonorNotFoundException("Donor not found");

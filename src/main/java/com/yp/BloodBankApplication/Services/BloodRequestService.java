@@ -2,6 +2,7 @@ package com.yp.BloodBankApplication.Services;
 
 import com.yp.BloodBankApplication.Entity.BloodRequest;
 import com.yp.BloodBankApplication.Entity.Hospital;
+import com.yp.BloodBankApplication.Entity.SupplyReport;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Enums.Priority;
 import com.yp.BloodBankApplication.Exception.BloodBankNotFoundException;
