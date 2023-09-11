@@ -9,6 +9,7 @@ import com.yp.BloodBankApplication.Entity.Hospital;
 import com.yp.BloodBankApplication.Enums.BloodGroup;
 import com.yp.BloodBankApplication.Enums.Priority;
 import com.yp.BloodBankApplication.Repository.BloodRequestRepository;
+import com.yp.BloodBankApplication.Repository.HospitalRepository;
 import com.yp.BloodBankApplication.Requests.BloodBankHospitalRequest;
 import com.yp.BloodBankApplication.Services.BloodRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,9 @@ public class BloodRequestController {
 
     @Autowired
     private BloodRequestRepository bloodRequestRepository;
+
+    @Autowired
+    private HospitalRepository hospitalRepository;
 
     /**
      * Endpoint to add a new blood request for a hospital.
@@ -129,6 +133,25 @@ public class BloodRequestController {
 
         return ResponseEntity.ok(pageResult);
     }
+
+    @GetMapping("/paginationAndSortingBloodRequestsByHospital/{hospitalRequestId}")
+    public ResponseEntity<Page<BloodRequest>> getUsersBloodRequest(
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "5") int pageSize,
+            @RequestParam(defaultValue = "bloodRequestId") String sortBy,
+            @PathVariable int hospitalRequestId) {
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+
+        Page<BloodRequest> pageResult = bloodRequestRepository.findAllByHospitalRequestId(pageable,hospitalRequestId);
+
+//        List<BloodRequest> hospitals = pageResult.getContent()
+
+        return ResponseEntity.ok(pageResult);
+    }
+
+
+
 
     @GetMapping("/acceptedRequests/{hospitalId}")
     public ResponseEntity<List<BloodRequest>> getAcceptedBloodRequests(@PathVariable int hospitalId){
